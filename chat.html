@@ -970,7 +970,24 @@ async function boot(){
 }
 
 
-setTimeout(()=>boot(), 500);
+// Deep link: chat.html?action=stylist jumps directly to section
+const urlAction = new URLSearchParams(window.location.search).get('action');
+if (urlAction) {
+  setTimeout(async()=>{
+    // Show rich menu immediately for deep links
+    const rm=document.getElementById('rich-menu');
+    if(rm) rm.style.display='block';
+    if(urlAction==='stylist') showStylists();
+    else if(urlAction==='style_menu') showStyleMenu();
+    else if(urlAction==='campaign') showCampaign();
+    else if(urlAction==='reservation') showReservation();
+    else if(urlAction==='point') showPoint();
+    else if(urlAction==='access') showAccess();
+    else boot();
+  }, 500);
+} else {
+  setTimeout(()=>boot(), 500);
+}
 </script>
 </body>
 </html>

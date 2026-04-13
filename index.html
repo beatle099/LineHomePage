@@ -674,6 +674,12 @@ function useCoupon(btn) {
 // ── Init ──
 buildFAQ();
 restoreCoupons();
+
+// Deep link: index.html#style or index.html#info
+var hashTab = window.location.hash.replace('#','');
+if (hashTab && document.getElementById('tab-'+hashTab)) {
+  switchTab(hashTab);
+}
 </script>
 </body>
 </html>
