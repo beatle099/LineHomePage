@@ -39,7 +39,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:39
 /* ── Cover ── */
 .cover{
   width:100%;height:200px;
-  background:linear-gradient(160deg,#f5ede8 0%,#e8d0c4 50%,#d4b8a8 100%);
+  background:url('images/HaruTokyodesignbanner.png') center/cover no-repeat, linear-gradient(160deg,#f5ede8 0%,#e8d0c4 50%,#d4b8a8 100%);
   position:relative;overflow:hidden;
 }
 .cover-pattern{
@@ -49,7 +49,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:39
 }
 .cover-text{
   position:absolute;bottom:16px;left:20px;
-  font-size:28px;font-weight:300;letter-spacing:6px;color:rgba(100,60,40,.55);
+  font-size:28px;font-weight:500;letter-spacing:6px;color:rgba(255,255,255,.95);text-shadow:0 2px 8px rgba(80,40,20,.6);
   font-style:italic;
 }
 
@@ -262,6 +262,25 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:39
   display:flex;justify-content:space-between;align-items:center;
 }
 
+/* ── Style gallery ── */
+.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px}
+.style-card{background:var(--white);border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.style-img{height:140px;background:linear-gradient(135deg,var(--rose-lt),#e8c4b0);display:flex;align-items:center;justify-content:center}
+.style-img img{width:100%;height:100%;object-fit:cover;display:block}
+.style-img svg{width:64px;height:64px;opacity:.5;stroke:var(--rose)}
+.style-info{padding:10px 12px}
+.style-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.style-desc{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* ── FAQ ── */
+.faq-list{padding:16px}
+.faq-item{background:var(--white);border-radius:10px;margin-bottom:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.faq-q{padding:14px 16px;font-size:13px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.faq-q:after{content:'＋';font-size:16px;color:var(--muted);transition:transform .2s}
+.faq-item.open .faq-q:after{content:'−'}
+.faq-a{display:none;padding:0 16px 14px;font-size:12px;color:var(--muted);line-height:1.8}
+.faq-item.open .faq-a{display:block}
+
 /* ── Bottom nav (LINE style) ── */
 .bottom-nav{display:none}
 </style>
@@ -270,7 +289,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:39
 
 <!-- LINE Top Bar -->
 <div class="line-topbar">
-  <div class="topbar-back">
+  <div class="topbar-back" onclick="window.location.href='chat.html'">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
     トーク
   </div>
@@ -315,9 +334,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:39
 <!-- Tabs -->
 <div class="tabs">
   <div class="tab active" onclick="switchTab('home')" id="tab-home">ホーム</div>
-  <div class="tab" href="reservation.html" id="tab-menu">メニュー</div>
+  <div class="tab" onclick="switchTab('menu')" id="tab-menu">メニュー</div>
   <div class="tab" onclick="switchTab('coupon')" id="tab-coupon">クーポン</div>
   <div class="tab" onclick="switchTab('info')" id="tab-info">店舗情報</div>
+  <div class="tab" onclick="switchTab('style')" id="tab-style">スタイル</div>
+  <div class="tab" onclick="switchTab('faq')" id="tab-faq">よくある質問</div>
 </div>
 
 <!-- ═══ HOME ═══ -->
@@ -353,13 +374,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:39
           </div>
           <div class="rm-label">クーポン</div>
         </div>
-        <div class="rm-btn">
+        <div class="rm-btn" onclick="switchTab('style')">
           <div class="rm-icon">
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M17 14v3h3M14 21h3"/></svg>
           </div>
           <div class="rm-label">スタイル</div>
         </div>
-        <div class="rm-btn">
+        <div class="rm-btn" onclick="switchTab('faq')">
           <div class="rm-icon">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
           </div>
@@ -492,7 +513,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:39
     </div>
     <div class="coupon-bottom">
       <div class="coupon-expire">有効期限：2026年6月30日</div>
-      <button class="coupon-btn" onclick="useCoupon(this)">つかう</button>
+      <button class="coupon-btn" data-coupon="first_visit" onclick="useCoupon(this)">つかう</button>
     </div>
   </div>
 
@@ -506,7 +527,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:39
     </div>
     <div class="coupon-bottom">
       <div class="coupon-expire">有効期限：2026年4月30日</div>
-      <button class="coupon-btn" onclick="useCoupon(this)">つかう</button>
+      <button class="coupon-btn" data-coupon="spring_set" onclick="useCoupon(this)">つかう</button>
     </div>
   </div>
 
@@ -543,7 +564,92 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:39
   </div>
 </div>
 
+<!-- ═══ STYLE ═══ -->
+<div class="tab-content" id="content-style">
+  <div style="padding:16px 16px 8px">
+    <div class="section-label">スタイルギャラリー</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Haru Tokyoのおすすめスタイル</div>
+  </div>
+  <div class="style-grid">
+    <div class="style-card">
+      <div class="style-img"><img src="images/menu_color.png" alt="透明感カラー" onerror="this.style.display='none'"></div>
+      <div class="style-info"><div class="style-name">透明感カラー</div><div class="style-desc">アッシュ系カラーで柔らかい印象に</div></div>
+    </div>
+    <div class="style-card">
+      <div class="style-img"><img src="images/menu_cut.png" alt="韓国風レイヤー" onerror="this.style.display='none'"></div>
+      <div class="style-info"><div class="style-name">韓国風レイヤー</div><div class="style-desc">顔まわりの軽さでトレンド感UP</div></div>
+    </div>
+    <div class="style-card">
+      <div class="style-img"><img src="images/menu_perm.png" alt="大人ボブ" onerror="this.style.display='none'"></div>
+      <div class="style-info"><div class="style-name">大人ボブ</div><div class="style-desc">毛先の丸みで上品なシルエット</div></div>
+    </div>
+    <div class="style-card">
+      <div class="style-img"><img src="images/menu_treatment.png" alt="ハイライトMIX" onerror="this.style.display='none'"></div>
+      <div class="style-info"><div class="style-name">ハイライトMIX</div><div class="style-desc">立体感のあるナチュラルカラー</div></div>
+    </div>
+  </div>
+  <div style="padding:0 16px 20px;text-align:center">
+    <div style="background:var(--rose-lt);border-radius:10px;padding:14px;font-size:12px;color:var(--rose);line-height:1.7">
+      お好みのスタイルを<br><strong>LINEで「スタイル」と送信</strong>してご相談ください
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FAQ ═══ -->
+<div class="tab-content" id="content-faq">
+  <div style="padding:16px 16px 8px">
+    <div class="section-label">よくある質問</div>
+  </div>
+  <div class="faq-list" id="faq-list"></div>
+</div>
+
 <script>
+var FAQS = [
+  {q:'予約はどうすればいいですか？', a:'LINEのリッチメニューから「予約する」をタップするか、メッセージで「予約」と送信してください。24時間受付可能です。お電話（<a href="tel:0312345678" style="color:var(--green)">03-1234-5678</a>）でもご予約いただけます。'},
+  {q:'当日予約はできますか？', a:'空きがあれば当日予約も承っております。LINEまたはお電話でお気軽にお問い合わせください。'},
+  {q:'キャンセルはいつまで可能ですか？', a:'前日17時までにLINEまたはお電話でご連絡ください。当日キャンセルはキャンセル料が発生する場合がございます。'},
+  {q:'駐車場はありますか？', a:'専用駐車場はございません。近隣のコインパーキングをご利用ください。表参道駅A2出口から徒歩5分です。'},
+  {q:'クーポンは併用できますか？', a:'申し訳ございませんが、クーポンの併用はできません。最もお得なクーポンを1枚ご利用ください。'},
+  {q:'定休日はいつですか？', a:'毎週火曜日が定休日です。営業時間は月・水〜土 10:00〜20:00、日・祝日 10:00〜18:00です。'},
+  {q:'支払い方法は？', a:'現金・クレジットカード（VISA/Mastercard/AMEX）・PayPay・LINE Payに対応しています。'},
+  {q:'子連れでも大丈夫ですか？', a:'はい、お子様連れのお客様も歓迎です。キッズスペースはございませんが、ベビーカーでそのままご来店いただけます。'}
+];
+
+function buildFAQ() {
+  var list = document.getElementById('faq-list');
+  FAQS.forEach(function(faq, i) {
+    var item = document.createElement('div');
+    item.className = 'faq-item';
+    item.innerHTML = '<div class="faq-q" onclick="toggleFaq(this)">' + faq.q + '</div><div class="faq-a">' + faq.a + '</div>';
+    list.appendChild(item);
+  });
+}
+
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+// ── Coupon persistence ──
+var COUPON_KEY = 'harutokyo_coupons';
+function loadCoupons() {
+  try { var r = localStorage.getItem(COUPON_KEY); return r ? JSON.parse(r) : {}; } catch(e) { return {}; }
+}
+function saveCouponUsed(id) {
+  var c = loadCoupons(); c[id] = true;
+  try { localStorage.setItem(COUPON_KEY, JSON.stringify(c)); } catch(e) {}
+}
+function restoreCoupons() {
+  var used = loadCoupons();
+  document.querySelectorAll('.coupon-btn').forEach(function(btn) {
+    var id = btn.getAttribute('data-coupon');
+    if (id && used[id]) {
+      btn.textContent = '使用済み';
+      btn.style.background = '#aaa';
+      btn.disabled = true;
+    }
+  });
+}
+
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -560,8 +666,14 @@ function useCoupon(btn) {
   btn.textContent = '使用済み';
   btn.style.background = '#aaa';
   btn.disabled = true;
+  var id = btn.getAttribute('data-coupon');
+  if (id) saveCouponUsed(id);
   alert('クーポンを使用しました。\nスタッフにこの画面をご提示ください。');
 }
+
+// ── Init ──
+buildFAQ();
+restoreCoupons();
 </script>
 </body>
 </html>

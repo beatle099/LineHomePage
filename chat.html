@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Haru Tokyo | LINE</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" media="print" onload="this.media='all'" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -37,9 +37,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:43
 /* ── Messages ── */
 .msg-row{display:flex;align-items:flex-end;gap:8px;margin-bottom:10px}
 .msg-row.user{flex-direction:row-reverse}
-.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4a3728,#2a1a0e);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.av svg{width:22px;height:22px;stroke:rgba(255,255,255,.7);fill:none;stroke-width:1.5;stroke-linecap:round}
-.av img{width:36px;height:36px;object-fit:cover;border-radius:50%}
+.av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#4a3728,#2a1a0e);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.av svg{width:26px;height:26px;stroke:rgba(255,255,255,.7);fill:none;stroke-width:1.5;stroke-linecap:round}
+.av img{width:44px;height:44px;object-fit:cover;border-radius:50%}
 .msg-col{display:flex;flex-direction:column;max-width:78%}
 .msg-row.user .msg-col{align-items:flex-end}
 .bubble{background:var(--white);border-radius:4px 16px 16px 16px;padding:10px 13px;font-size:13px;line-height:1.75;box-shadow:var(--shadow)}
@@ -69,25 +69,24 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:43
 .ic-link:hover{background:#f5f9ff}
 
 /* ── Carousel ── */
-.caro-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:44px;padding-bottom:4px}
-.caro-wrap::-webkit-scrollbar{display:none}
-.caro-inner{display:flex;gap:8px;padding:0 10px}
-.caro-card{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);width:190px;flex-shrink:0}
-.caro-img{height:120px;display:flex;align-items:center;justify-content:center}
+.caro-wrap{margin-left:52px;padding-bottom:4px;max-width:calc(100% - 52px)}
+.caro-inner{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0}
+.caro-card{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.caro-img{height:90px;display:flex;align-items:center;justify-content:center}
 .caro-img.c1{background:linear-gradient(135deg,#f5ede8,#d4b8a8)}
 .caro-img.c2{background:linear-gradient(135deg,#e0f0e4,#b0d4b8)}
 .caro-img.c3{background:linear-gradient(135deg,#eae4d8,#c8c0a8)}
 .caro-img.c4{background:linear-gradient(135deg,#e0d4ec,#c0b0d4)}
 .caro-img.c5{background:linear-gradient(135deg,#d8e8f0,#a8c8d8)}
 .caro-img svg{width:36px;height:36px;opacity:.28;stroke:rgba(60,30,10,.7);fill:none;stroke-width:1.5;stroke-linecap:round}
-.caro-body{padding:10px 12px}
-.caro-title{font-size:12px;font-weight:700;line-height:1.4;margin-bottom:4px}
-.caro-desc{font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:8px}
-.caro-link{color:var(--blue);font-size:11px;font-weight:500;padding:6px 0;border-top:1px solid var(--border);display:block;cursor:pointer;text-align:center}
+.caro-body{padding:8px 10px}
+.caro-title{font-size:11px;font-weight:700;line-height:1.4;margin-bottom:3px}
+.caro-desc{font-size:10px;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.caro-link{color:var(--blue);font-size:10px;font-weight:500;padding:5px 0;border-top:1px solid var(--border);display:block;cursor:pointer;text-align:center}
 .caro-link+.caro-link{border-top:none;padding-top:0}
 
 /* ── Wide 2-col cards ── */
-.wide-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-left:44px;padding:0 10px}
+.wide-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-left:52px;max-width:calc(100% - 52px);padding:0}
 .wide-card{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
 .wc-img{height:90px;display:flex;align-items:center;justify-content:center}
 .wc-img.spa{background:linear-gradient(135deg,#d8ccc4,#b8a898)}
@@ -194,7 +193,7 @@ input[type=range]{flex:1;accent-color:var(--green)}
     戻る
   </a>
   <div class="hdr-center" style="display:flex;align-items:center;justify-content:center;gap:8px">
-    <img src="images/line_icon.png" width="28" height="28" style="border-radius:50%;object-fit:cover" onerror="this.style.display='none'">
+    <img src="images/line_icon.png" width="28" height="28" loading="lazy" style="border-radius:50%;object-fit:cover" onerror="this.style.display='none'">
     <div>
       <div class="hdr-name">Haru Tokyo</div>
       <div class="hdr-sub">ヘアサロン · 表参道</div>
@@ -239,9 +238,9 @@ input[type=range]{flex:1;accent-color:var(--green)}
         <div class="rm-icon gray"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
         <div class="rm-label">アクセス</div>
       </div>
-      <div class="rm-btn" onclick="rmAction('coupon')">
+      <div class="rm-btn" onclick="rmAction('campaign')">
         <div class="rm-icon rose"><svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg></div>
-        <div class="rm-label">クーポン</div>
+        <div class="rm-label">キャンペーン</div>
       </div>
     </div>
   </div>
@@ -461,14 +460,15 @@ const ICONS = {
 // ══════════════════════════════════════════
 const area = document.getElementById('chat-area');
 const now = new Date();
-function timeStr(){ const d=new Date(); return `午後 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
-function scroll(){ setTimeout(()=>area.scrollTo({top:area.scrollHeight,behavior:'smooth'}),80); }
+function timeStr(){ const d=new Date(),h=d.getHours(),ampm=h<12?'午前':'午後'; return `${ampm} ${String(h%12||12).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+let _scrollTimer=null;
+function scroll(){ if(_scrollTimer) clearTimeout(_scrollTimer); _scrollTimer=setTimeout(()=>{_scrollTimer=null;area.scrollTo({top:area.scrollHeight,behavior:'smooth'});},120); }
 
 function av(){
   const d=document.createElement('div');d.className='av';
   const img=document.createElement('img');
   img.src='images/bot_avatar.png';
-  img.width=36;img.height=36;
+  img.width=44;img.height=44;img.loading='lazy';
   img.onerror=function(){
     d.removeChild(img);
     d.innerHTML=`<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
@@ -531,7 +531,7 @@ function makeImgCard(imgKey,title,desc,links){
   const art=!imgSrc2 && (CARD_ARTS[imgKey]||'');
   const ico=(!imgSrc2 && !art && ICONS[imgKey])||ICONS['welcome'];
   const imgHtml2 = imgSrc2
-    ? `<img src="${imgSrc2}" width="220" height="130" style="width:100%;height:130px;object-fit:cover;display:block" onerror="this.style.display='none'">`
+    ? `<img src="${imgSrc2}" width="220" height="130" loading="lazy" style="width:100%;height:130px;object-fit:cover;display:block" onerror="this.style.display='none'">`
     : (art || ico);
   card.innerHTML=`<div class="ic-img" style="background:transparent;padding:${imgSrc2?'0':art?'0':'8px'};overflow:hidden">${imgHtml2}</div>
     <div class="ic-body"><div class="ic-title">${title}</div><div class="ic-desc">${desc}</div>${ls}</div>`;
@@ -549,7 +549,7 @@ function makeCaro(items){
     const art = !imgSrc && (CARD_ARTS[imgKey]||'');
     const ico = !imgSrc && !art && (ICONS[imgKey]||'');
     const imgDiv = imgSrc
-      ? `<div class="caro-img" style="background:#f0e8e0;padding:0;overflow:hidden"><img src="${imgSrc}" width="190" height="120" style="width:100%;height:120px;object-fit:cover;display:block" onerror="this.parentElement.innerHTML=\'<div style=\\"width:100%;height:120px;background:#f0e8e0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999\\">画像なし</div>\'"></div>`
+      ? `<div class="caro-img" style="background:#f0e8e0;padding:0;overflow:hidden"><img src="${imgSrc}" width="160" height="90" loading="lazy" style="width:100%;height:90px;object-fit:cover;display:block" onerror="this.style.display='none'"></div>`
       : art
         ? `<div class="caro-img" style="background:transparent;padding:0;overflow:hidden">${art}</div>`
         : ico
@@ -702,7 +702,7 @@ async function showStyleMenu(){
     const wcSrc = IMAGE_MAP[c.artKey];
     const art=!wcSrc && (CARD_ARTS[c.artKey]||'');
     const imgHtml= wcSrc
-      ? `<div class="wc-img" style="background:#f0e8e0;padding:0;overflow:hidden;height:90px"><img src="${wcSrc}" width="190" height="90" style="width:100%;height:90px;object-fit:cover;display:block" onerror="this.style.display='none'"></div>`
+      ? `<div class="wc-img" style="background:#f0e8e0;padding:0;overflow:hidden;height:90px"><img src="${wcSrc}" width="300" height="90" loading="lazy" style="width:100%;height:90px;object-fit:cover;display:block" onerror="this.style.display='none'"></div>`
       : art
         ? `<div class="wc-img" style="background:transparent;padding:0;overflow:hidden;height:90px">${art}</div>`
         : `<div class="wc-img ${c.imgClass}"></div>`;
@@ -834,12 +834,25 @@ async function showFinalMsg(){
 }
 
 // ══════════════════════════════════════════
+// CAMPAIGN
+// ══════════════════════════════════════════
+async function showCampaign(){
+  await botMsg('現在開催中のキャンペーンをご紹介します 🌸');
+  botCaro([
+    {img:'c1',icon:'coupon',art:'coupon',title:'春の美髪キャンペーン',desc:'カラー＋トリートメント ¥8,800（税込）\n通常¥13,200 → 期間限定33%OFF',links:[{t:'クーポンを受け取る',a:'coupon_20'},{t:'ご予約はこちら',a:'reservation'}]},
+    {img:'c2',icon:'coupon',art:'gift_unlock',title:'初回限定20%OFF',desc:'はじめてのご来店に\n全メニュー対象・他クーポン併用不可',links:[{t:'特典を受け取る',a:'gift_unlock'},{t:'メニューを見る',a:'style_menu'}]},
+  ]);
+  setTimeout(()=>addNextChips(),1000);
+}
+
+// ══════════════════════════════════════════
 // NEXT CHIPS — shown after each section
 // ══════════════════════════════════════════
 function addNextChips(){
   addChips([
     {label:'スタイリスト紹介',action:()=>showStylists()},
     {label:'スタイルメニュー',action:()=>showStyleMenu()},
+    {label:'キャンペーン',action:()=>showCampaign()},
     {label:'ご予約',action:()=>showReservation()},
     {label:'ポイントカード',action:()=>showPoint()},
     {label:'アクセス',action:()=>showAccess()},
@@ -868,6 +881,7 @@ function rmAction(a){
   else if(a==='point')showPoint();
   else if(a==='access')showAccess();
   else if(a==='coupon')handleLink('coupon_20');
+  else if(a==='campaign')showCampaign();
 }
 
 // ══════════════════════════════════════════
@@ -884,7 +898,7 @@ function handleLink(a){
       row.appendChild(av());
       const col=document.createElement('div');col.className='msg-col';
       const card=document.createElement('div');card.className='book-card';
-      card.innerHTML=`<div class="bk-img warm" style="background:#c8d4c8;padding:0;overflow:hidden"><img src="images/booking_hero.png" width="240" height="130" style="width:100%;height:130px;object-fit:cover;display:block" onerror="this.style.display='none'"></div>
+      card.innerHTML=`<div class="bk-img warm" style="background:#c8d4c8;padding:0;overflow:hidden"><img src="images/booking_hero.png" width="240" height="130" loading="lazy" style="width:100%;height:130px;object-fit:cover;display:block" onerror="this.style.display='none'"></div>
         <div class="bk-body">
           <div class="bk-title">ご予約はこちらから</div>
           <div class="bk-desc">LINEから24時間いつでも受付中です。<br>緊急の場合はお電話ください。</div>
@@ -901,14 +915,15 @@ function handleLink(a){
   if(a==='stylist'){ showStylists(); return; }
   if(a==='style_menu'||a==='style_menu_detail'){ showStyleMenu(); return; }
   if(a==='access'){ showAccess(); return; }
-  if(a==='coupon_20'){ userMsg('20%OFFクーポンを受け取る'); setTimeout(async()=>{ await botMsg('20%OFFクーポンをお受け取りいただきました 🎁<br>ご来店時にスタッフにお見せください。'); addNextChips(); },400); }
-  if(a==='coupon_spa'){ userMsg('ヘッドスパ15分券を受け取る'); setTimeout(async()=>{ await botMsg('ヘッドスパお試し15分券をお受け取りいただきました 🌿'); addNextChips(); },400); }
-  if(a==='coupon_lottery'){ userMsg('抽選に挑戦する'); setTimeout(async()=>{ await botMsg('🎰 抽選結果...　<strong>当選！</strong><br>500円OFFクーポンをゲットしました！'); addNextChips(); },400); }
-  if(a==='open_map'){ window.open('https://maps.google.com','_blank'); }
-  if(a==='point_stamp'){ userMsg('ポイントを貯める'); setTimeout(async()=>{ await botMsg('本日分のポイントを付与しました！ 🪙<br>現在：<strong>1ポイント</strong><br>10ポイントで特典プレゼント！'); },400); }
-  if(a==='point_use'){ userMsg('ポイント確認'); setTimeout(async()=>{ await botMsg('現在の獲得ポイント：<strong>1ポイント</strong><br>次の特典まであと9ポイントです 🎁'); },400); }
-  if(a==='hobby'){ userMsg('趣味・ハマっていることを見る'); setTimeout(async()=>{ await botMsg('スタイリストの趣味ページは準備中です。お楽しみに！✨'); },400); }
-  if(a==='contact'){ userMsg('LINEで相談する'); setTimeout(async()=>{ await botMsg('お気軽にメッセージをどうぞ！担当スタイリストよりご連絡いたします 😊'); },400); }
+  if(a==='campaign'){ showCampaign(); return; }
+  if(a==='coupon_20'){ userMsg('20%OFFクーポンを受け取る'); setTimeout(async()=>{ await botMsg('20%OFFクーポンをお受け取りいただきました 🎁<br>ご来店時にスタッフにお見せください。'); addNextChips(); },400); return; }
+  if(a==='coupon_spa'){ userMsg('ヘッドスパ15分券を受け取る'); setTimeout(async()=>{ await botMsg('ヘッドスパお試し15分券をお受け取りいただきました 🌿'); addNextChips(); },400); return; }
+  if(a==='coupon_lottery'){ userMsg('抽選に挑戦する'); setTimeout(async()=>{ await botMsg('🎰 抽選結果...　<strong>当選！</strong><br>500円OFFクーポンをゲットしました！'); addNextChips(); },400); return; }
+  if(a==='open_map'){ window.open('https://maps.google.com','_blank'); return; }
+  if(a==='point_stamp'){ userMsg('ポイントを貯める'); setTimeout(async()=>{ await botMsg('本日分のポイントを付与しました！ 🪙<br>現在：<strong>1ポイント</strong><br>10ポイントで特典プレゼント！'); addNextChips(); },400); return; }
+  if(a==='point_use'){ userMsg('ポイント確認'); setTimeout(async()=>{ await botMsg('現在の獲得ポイント：<strong>1ポイント</strong><br>次の特典まであと9ポイントです 🎁'); addNextChips(); },400); return; }
+  if(a==='hobby'){ userMsg('趣味・ハマっていることを見る'); setTimeout(async()=>{ await botMsg('スタイリストの趣味ページは準備中です。お楽しみに！✨'); addNextChips(); },400); return; }
+  if(a==='contact'){ userMsg('LINEで相談する'); setTimeout(async()=>{ await botMsg('お気軽にメッセージをどうぞ！担当スタイリストよりご連絡いたします 😊'); addNextChips(); },400); return; }
 }
 
 // ══════════════════════════════════════════
@@ -924,6 +939,7 @@ const KW={
   'アクセス':()=>showAccess(),
   '場所':()=>showAccess(),
   'ポイント':()=>showPoint(),
+  'キャンペーン':()=>showCampaign(),
 };
 const AUTO_REPLY='メッセージありがとうございます！<br>申し訳ありませんが、このアカウントでは個別のお問い合わせを受け付けておりません。<br>次の配信までお待ちください 😊';
 
