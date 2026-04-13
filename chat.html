@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Haru Tokyo | LINE</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#06C755;--green-dk:#05a847;--green-lt:#f0faf4;
+  --gold:#b8860b;--gold-lt:#fffbeb;
+  --blue:#1a6bb5;
+  --rose:#c8846a;--rose-lt:#fdf3ef;
+  --bg:#ddd5c8;--white:#fff;--text:#111;--muted:#666;--hint:#aaa;
+  --border:#e0e0e0;--danger:#dc2626;
+  --font:'Noto Sans JP',sans-serif;
+  --shadow:0 1px 4px rgba(0,0,0,.1);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:430px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+
+/* ── LINE Header ── */
+.line-hdr{background:var(--green);padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.hdr-back{color:white;font-size:13px;display:flex;align-items:center;gap:2px;cursor:pointer;min-width:48px;text-decoration:none}
+.hdr-back svg{width:16px;height:16px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round}
+.hdr-center{flex:1;text-align:center}
+.hdr-name{color:white;font-size:15px;font-weight:700}
+.hdr-sub{color:rgba(255,255,255,.8);font-size:11px;margin-top:1px}
+.hdr-icons{display:flex;gap:14px;min-width:48px;justify-content:flex-end}
+.hdr-icons svg{width:20px;height:20px;stroke:white;fill:none;stroke-width:1.8;stroke-linecap:round;cursor:pointer}
+
+/* ── Chat scroll area ── */
+.chat-area{flex:1;overflow-y:auto;padding:14px 10px 8px;display:flex;flex-direction:column}
+.date-pill{text-align:center;margin:4px 0 14px}
+.date-pill span{background:rgba(0,0,0,.22);color:white;font-size:11px;padding:3px 12px;border-radius:99px}
+
+/* ── Messages ── */
+.msg-row{display:flex;align-items:flex-end;gap:8px;margin-bottom:10px}
+.msg-row.user{flex-direction:row-reverse}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4a3728,#2a1a0e);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.av svg{width:22px;height:22px;stroke:rgba(255,255,255,.7);fill:none;stroke-width:1.5;stroke-linecap:round}
+.av img{width:36px;height:36px;object-fit:cover;border-radius:50%}
+.msg-col{display:flex;flex-direction:column;max-width:78%}
+.msg-row.user .msg-col{align-items:flex-end}
+.bubble{background:var(--white);border-radius:4px 16px 16px 16px;padding:10px 13px;font-size:13px;line-height:1.75;box-shadow:var(--shadow)}
+.msg-row.user .bubble{background:var(--green);color:white;border-radius:16px 4px 16px 16px}
+.msg-time{font-size:10px;color:rgba(0,0,0,.38);margin-top:3px}
+.msg-row.user .msg-time{text-align:right}
+
+/* ── Typing ── */
+.typing-row{display:flex;align-items:flex-end;gap:8px;margin-bottom:10px}
+.typing-bub{background:var(--white);border-radius:4px 16px 16px 16px;padding:12px 14px;box-shadow:var(--shadow);display:flex;gap:5px}
+.typing-bub span{width:7px;height:7px;border-radius:50%;background:#bbb;animation:tp .9s infinite}
+.typing-bub span:nth-child(2){animation-delay:.2s}
+.typing-bub span:nth-child(3){animation-delay:.4s}
+@keyframes tp{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+/* ── Image card (single) ── */
+.img-card{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);width:220px}
+.ic-img{height:130px;display:flex;align-items:center;justify-content:center}
+.ic-img.salon{background:linear-gradient(135deg,#ecddd4,#c4a090)}
+.ic-img.green{background:linear-gradient(135deg,#c8dfc8,#a0c0a0)}
+.ic-img.gold{background:linear-gradient(135deg,#e8d888,#c8a828)}
+.ic-img svg{width:48px;height:48px;opacity:.3;stroke:rgba(60,30,10,.6);fill:none;stroke-width:1.5;stroke-linecap:round}
+.ic-body{padding:12px 14px}
+.ic-title{font-size:13px;font-weight:700;line-height:1.5;margin-bottom:6px}
+.ic-desc{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px}
+.ic-link{color:var(--blue);font-size:13px;font-weight:500;padding:8px 0;border-top:1px solid var(--border);display:block;cursor:pointer;text-align:center}
+.ic-link:hover{background:#f5f9ff}
+
+/* ── Carousel ── */
+.caro-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:44px;padding-bottom:4px}
+.caro-wrap::-webkit-scrollbar{display:none}
+.caro-inner{display:flex;gap:8px;padding:0 10px}
+.caro-card{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);width:190px;flex-shrink:0}
+.caro-img{height:120px;display:flex;align-items:center;justify-content:center}
+.caro-img.c1{background:linear-gradient(135deg,#f5ede8,#d4b8a8)}
+.caro-img.c2{background:linear-gradient(135deg,#e0f0e4,#b0d4b8)}
+.caro-img.c3{background:linear-gradient(135deg,#eae4d8,#c8c0a8)}
+.caro-img.c4{background:linear-gradient(135deg,#e0d4ec,#c0b0d4)}
+.caro-img.c5{background:linear-gradient(135deg,#d8e8f0,#a8c8d8)}
+.caro-img svg{width:36px;height:36px;opacity:.28;stroke:rgba(60,30,10,.7);fill:none;stroke-width:1.5;stroke-linecap:round}
+.caro-body{padding:10px 12px}
+.caro-title{font-size:12px;font-weight:700;line-height:1.4;margin-bottom:4px}
+.caro-desc{font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.caro-link{color:var(--blue);font-size:11px;font-weight:500;padding:6px 0;border-top:1px solid var(--border);display:block;cursor:pointer;text-align:center}
+.caro-link+.caro-link{border-top:none;padding-top:0}
+
+/* ── Wide 2-col cards ── */
+.wide-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-left:44px;padding:0 10px}
+.wide-card{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.wc-img{height:90px;display:flex;align-items:center;justify-content:center}
+.wc-img.spa{background:linear-gradient(135deg,#d8ccc4,#b8a898)}
+.wc-img.prod{background:linear-gradient(135deg,#e4dfd4,#c8c4b4)}
+.wc-img svg{width:30px;height:30px;opacity:.28;stroke:rgba(60,30,10,.7);fill:none;stroke-width:1.5;stroke-linecap:round}
+.wc-body{padding:10px 12px}
+.wc-title{font-size:11px;font-weight:700;line-height:1.4;margin-bottom:4px}
+.wc-link{color:var(--blue);font-size:10px;font-weight:500;padding:5px 0;border-top:1px solid var(--border);display:block;cursor:pointer}
+.wc-link:hover{background:#f5f9ff}
+
+/* ── Booking card ── */
+.book-card{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);width:240px}
+.bk-img{height:130px;display:flex;align-items:center;justify-content:center}
+.bk-img.warm{background:linear-gradient(135deg,#c8d4c8,#a0b4a0)}
+.bk-img svg{width:40px;height:40px;opacity:.28;stroke:rgba(40,60,40,.7);fill:none;stroke-width:1.5;stroke-linecap:round}
+.bk-body{padding:12px 14px}
+.bk-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.bk-desc{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:10px}
+.bk-btn{display:block;width:100%;padding:11px;text-align:center;font-size:13px;font-weight:700;border:none;border-radius:6px;cursor:pointer;font-family:var(--font);margin-bottom:8px}
+.bk-btn:last-child{margin-bottom:0}
+.btn-gold{background:var(--gold);color:white}
+.btn-green{background:var(--green);color:white}
+
+/* ── Point card ── */
+.point-wrap{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);width:260px;margin-left:44px;padding:14px}
+.pt-title{font-size:13px;font-weight:700;color:var(--gold);text-align:center;margin-bottom:2px}
+.pt-sub{font-size:10px;color:var(--muted);text-align:center;margin-bottom:10px}
+.pt-logo{width:56px;height:56px;border-radius:50%;border:2px solid #d4a820;background:#fffbeb;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:10px;font-weight:700;color:#92400e;letter-spacing:.5px}
+.pt-tagline{font-size:10px;color:#92400e;background:#fffbeb;border-radius:6px;padding:5px 8px;text-align:center;font-weight:500;margin-bottom:10px}
+.pt-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pt-btn{background:var(--gold);border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;transition:opacity .15s}
+.pt-btn:active{opacity:.8}
+.pt-badge{background:var(--danger);color:white;font-size:9px;padding:2px 5px;border-radius:4px;display:inline-block;margin-bottom:4px}
+.pt-btn-sub{font-size:10px;color:rgba(255,255,255,.8);margin-bottom:3px}
+.pt-btn-main{font-size:11px;font-weight:700;color:white}
+
+/* ── Access ── */
+.access-bub{background:var(--white);border-radius:4px 16px 16px 16px;padding:12px 14px;font-size:13px;line-height:1.8;max-width:78%;box-shadow:var(--shadow)}
+.map-link{color:var(--blue);display:block;margin-top:6px;font-size:12px}
+.map-preview{background:#f0f0f0;border:1px solid var(--border);border-radius:6px;padding:7px 10px;margin-top:5px;font-size:11px;color:var(--muted)}
+
+/* ── QR ── */
+.qr-wrap{background:var(--white);border-radius:12px;padding:18px;text-align:center;box-shadow:var(--shadow);width:240px;margin-left:44px}
+.qr-note{font-size:11px;color:var(--muted);line-height:1.7;margin:10px 0}
+.lm-badge{display:inline-flex;align-items:center;gap:6px;background:#e6f7ec;border-radius:99px;padding:5px 12px;font-size:12px;font-weight:700;color:#1a6b3a}
+
+/* ── Survey ── */
+.survey-wrap{background:var(--white);border-radius:12px;padding:14px;margin:0 10px 10px 54px;box-shadow:var(--shadow)}
+.s-q{font-size:13px;font-weight:700;margin-bottom:10px}
+.s-opt{width:100%;text-align:left;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font);font-size:13px;cursor:pointer;background:var(--white);color:var(--text);display:block;margin-bottom:6px;transition:all .15s}
+.s-opt:hover,.s-opt.sel{border-color:var(--green);background:var(--green-lt);color:var(--green);font-weight:500}
+.age-row{display:flex;align-items:center;gap:10px;padding:8px 0}
+.age-num{font-size:22px;font-weight:700;color:var(--green);min-width:52px;text-align:center}
+input[type=range]{flex:1;accent-color:var(--green)}
+.tick-row{display:flex;justify-content:space-between;font-size:10px;color:var(--hint);margin-bottom:10px}
+.concern-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.c-chip{padding:7px 12px;border:1.5px solid var(--border);border-radius:20px;font-size:12px;cursor:pointer;background:var(--white);font-family:var(--font);transition:all .15s}
+.c-chip.sel{background:var(--rose);border-color:var(--rose);color:white}
+.s-submit{width:100%;padding:11px;background:var(--green);color:white;border:none;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer}
+
+/* ── RICH MENU ── */
+.rich-menu{background:white;border-top:1px solid var(--border);flex-shrink:0}
+.rm-toggle{width:100%;padding:7px;background:var(--white);border:none;border-top:1px solid var(--border);font-size:11px;color:var(--muted);cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:4px}
+.rm-toggle svg{width:12px;height:12px;stroke:var(--muted);fill:none;stroke-width:2;transition:transform .2s}
+.rm-toggle.open svg{transform:rotate(180deg)}
+.rm-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--border)}
+.rm-btn{padding:14px 6px;text-align:center;cursor:pointer;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .12s}
+.rm-btn:nth-child(3n){border-right:none}
+.rm-btn:nth-child(n+4){border-bottom:none}
+.rm-btn:active{background:var(--green-lt)}
+.rm-icon{width:34px;height:34px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center}
+.rm-icon svg{width:18px;height:18px;stroke-width:1.8;stroke-linecap:round;fill:none}
+.rm-icon.green{background:var(--green-lt)}
+.rm-icon.green svg{stroke:var(--green)}
+.rm-icon.gold{background:var(--gold-lt)}
+.rm-icon.gold svg{stroke:var(--gold)}
+.rm-icon.blue{background:#eff6ff}
+.rm-icon.blue svg{stroke:var(--blue)}
+.rm-icon.rose{background:var(--rose-lt)}
+.rm-icon.rose svg{stroke:var(--rose)}
+.rm-icon.gray{background:#f5f5f5}
+.rm-icon.gray svg{stroke:#666}
+.rm-label{font-size:11px;font-weight:500;color:var(--text)}
+
+/* ── Input bar ── */
+.input-bar{background:var(--bg);border-top:1px solid rgba(0,0,0,.1);padding:8px 10px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.input-inner{flex:1;background:var(--white);border-radius:20px;padding:9px 15px;font-size:14px;color:var(--muted);cursor:pointer;border:1px solid var(--border);display:flex;align-items:center}
+.input-inner input{width:100%;border:none;outline:none;font-family:var(--font);font-size:14px;background:transparent;color:var(--text)}
+.send-btn{width:36px;height:36px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;border:none}
+.send-btn svg{width:16px;height:16px;stroke:white;fill:none;stroke-width:2.2;stroke-linecap:round}
+
+/* ── Quick reply chips ── */
+.qr-chips{display:flex;flex-wrap:wrap;gap:8px;padding:4px 10px 10px 54px}
+.qr-chip{background:var(--white);border:1.5px solid var(--green);border-radius:99px;padding:8px 14px;font-size:13px;color:var(--green);font-weight:500;cursor:pointer;font-family:var(--font);box-shadow:var(--shadow);transition:all .12s}
+.qr-chip:active{background:var(--green);color:white}
+</style>
+</head>
+<body>
+
+<!-- LINE Header -->
+<div class="line-hdr">
+  <a class="hdr-back" href="index.html">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    戻る
+  </a>
+  <div class="hdr-center" style="display:flex;align-items:center;justify-content:center;gap:8px">
+    <img src="images/line_icon.png" width="28" height="28" style="border-radius:50%;object-fit:cover" onerror="this.style.display='none'">
+    <div>
+      <div class="hdr-name">Haru Tokyo</div>
+      <div class="hdr-sub">ヘアサロン · 表参道</div>
+    </div>
+  </div>
+  <div class="hdr-icons">
+    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.6 11.6a19.79 19.79 0 01-3.07-8.67A2 2 0 012.51 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.52a16 16 0 006.29 6.29l.89-.89a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
+  </div>
+</div>
+
+<!-- Chat area -->
+<div class="chat-area" id="chat-area">
+  <div class="date-pill"><span>今日</span></div>
+</div>
+
+<!-- Rich Menu (hidden until survey done) -->
+<div class="rich-menu" id="rich-menu" style="display:none">
+  <button class="rm-toggle" id="rm-toggle" onclick="toggleRM()">
+    <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+    メニュー
+  </button>
+  <div id="rm-body" style="display:none">
+    <div class="rm-grid">
+      <div class="rm-btn" onclick="rmAction('stylist')">
+        <div class="rm-icon rose"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20c0-4 2.7-7 6-7s6 3 6 7"/></svg></div>
+        <div class="rm-label">スタイリスト</div>
+      </div>
+      <div class="rm-btn" onclick="rmAction('style_menu')">
+        <div class="rm-icon blue"><svg viewBox="0 0 24 24"><path d="M12 3C8 3 4 7 4 12c0 4 2.7 7.5 6 9M12 3c4 0 8 4 8 9 0 4-2.7 7.5-6 9M12 3v18M4 12h16"/></svg></div>
+        <div class="rm-label">スタイルメニュー</div>
+      </div>
+      <div class="rm-btn" onclick="rmAction('reservation')">
+        <div class="rm-icon green"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+        <div class="rm-label">予約する</div>
+      </div>
+      <div class="rm-btn" onclick="rmAction('point')">
+        <div class="rm-icon gold"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 3"/></svg></div>
+        <div class="rm-label">ポイント</div>
+      </div>
+      <div class="rm-btn" onclick="rmAction('access')">
+        <div class="rm-icon gray"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div class="rm-label">アクセス</div>
+      </div>
+      <div class="rm-btn" onclick="rmAction('coupon')">
+        <div class="rm-icon rose"><svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg></div>
+        <div class="rm-label">クーポン</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Input bar -->
+<div class="input-bar" id="input-bar">
+  <div class="input-inner" onclick="focusInput(this)">
+    <input type="text" id="msg-input" placeholder="メッセージを入力" onkeydown="if(event.key==='Enter')sendMsg()">
+  </div>
+  <button class="send-btn" onclick="sendMsg()">
+    <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2" fill="white" stroke="none"/></svg>
+  </button>
+</div>
+
+<script>
+const IMAGE_MAP = {
+  'koshigaya': 'images/stylist_koshigaya.png',
+  'okuyama': 'images/stylist_okuyama.png',
+  'sato': 'images/stylist_sato.png',
+  'manabe': 'images/stylist_manabe.png',
+  'any_stylist': 'images/stylist_all.png',
+  'cut_large': 'images/menu_cut.png',
+  'color_large': 'images/menu_color.png',
+  'perm': 'images/menu_perm.png',
+  'treatment': 'images/menu_treatment.png',
+  'stylist': 'images/menu_consult.png',
+  'coupon': 'images/coupon_bg.png',
+  'spa': 'images/coupon_bg.png',
+  'gift_unlock': 'images/gift_bg.png',
+  'welcome': 'images/gift_bg.png',
+  'salon_intro': 'images/gift_bg.png',
+  'salon_interior': 'images/salon_interior.png',
+  'products': 'images/products_shelf.png',
+  'booking': 'images/booking_hero.png',
+  'point': 'images/rm_point.png',
+  'access': 'images/rm_access.png',
+};
+
+const CARD_ARTS = {
+  'koshigaya': `<svg viewBox="0 0 190 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="190" height="120"><rect width="190" height="120" fill="#f0e8e0"/><rect x="0" y="70" width="190" height="50" fill="#e0d0c4"/><rect x="120" y="55" width="50" height="65" rx="8" fill="#c8b0a0"/><rect x="125" y="48" width="40" height="20" rx="10" fill="#d4bdb0"/><rect x="20" y="30" width="50" height="90" rx="4" fill="#3a2a1e"/><rect x="22" y="50" width="46" height="70" rx="3" fill="#f5f0ec"/><rect x="33" y="50" width="24" height="70" fill="#f5f0ec"/><path d="M33 50 L45 62 L57 50" stroke="#c8b0a0" stroke-width="1.5" fill="none"/><circle cx="45" cy="38" r="14" fill="#c8a888"/><ellipse cx="45" cy="26" rx="16" ry="5" fill="#1a1210"/><rect x="30" y="20" width="30" height="10" rx="2" fill="#1a1210"/><line x1="62" y1="72" x2="76" y2="86" stroke="#8a7060" stroke-width="2.5" stroke-linecap="round"/><line x1="62" y1="86" x2="76" y2="72" stroke="#8a7060" stroke-width="2.5" stroke-linecap="round"/><circle cx="69" cy="79" r="2.5" fill="#c8a888"/><rect x="135" y="10" width="45" height="50" rx="3" fill="#e8e0d8" stroke="#c8b0a0" stroke-width="1"/><rect x="138" y="13" width="39" height="44" rx="2" fill="#d8ece8" opacity="0.6"/><circle cx="170" cy="75" r="8" fill="#6a9860" opacity="0.7"/><circle cx="178" cy="70" r="6" fill="#4a8040" opacity="0.6"/><rect x="167" y="80" width="6" height="12" rx="2" fill="#8a6040"/><line x1="0" y1="95" x2="190" y2="95" stroke="#c8b0a0" stroke-width="1" opacity="0.4"/><text x="45" y="115" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#7a5840" opacity="0.8">Koshigaya</text></svg>`,
+  'okuyama': `<svg viewBox="0 0 190 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="190" height="120"><rect width="190" height="120" fill="#f5ede8"/><rect x="0" y="75" width="190" height="45" fill="#ead8d0"/><circle cx="160" cy="20" r="40" fill="#f0d8d0" opacity="0.5"/><circle cx="30" cy="100" r="30" fill="#e8c8c0" opacity="0.4"/><rect x="110" y="60" width="60" height="60" rx="10" fill="#d4c0b8"/><rect x="115" y="52" width="50" height="18" rx="9" fill="#e0cec8"/><rect x="18" y="35" width="55" height="85" rx="4" fill="#f8f0ec"/><path d="M30 36 Q18 48 16 68 Q14 80 20 88" stroke="#3a2010" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M60 36 Q72 48 74 68 Q76 80 70 90" stroke="#3a2010" stroke-width="8" fill="none" stroke-linecap="round"/><circle cx="45" cy="30" r="14" fill="#d4a888"/><path d="M31 24 Q45 14 59 24 Q56 18 45 16 Q34 18 31 24 Z" fill="#3a2010"/><path d="M57 28 Q70 30 68 40 Q66 48 60 44" stroke="#3a2010" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="20" y="48" width="50" height="72" rx="3" fill="#f5f0f0"/><path d="M35 48 L45 58 L55 48" stroke="#e0d0c8" stroke-width="1.5" fill="none"/><rect x="58" y="68" width="8" height="20" rx="4" fill="#c8b4e8"/><rect x="60" y="64" width="4" height="6" rx="2" fill="#b0a0d0"/><rect x="130" y="20" width="50" height="6" rx="1" fill="#c8b0a8"/><rect x="133" y="10" width="8" height="12" rx="3" fill="#b4d0c4"/><rect x="144" y="8" width="10" height="14" rx="3" fill="#c8e0b8"/><rect x="157" y="12" width="7" height="10" rx="3" fill="#f0d8c8"/><text x="45" y="115" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#9a5840" opacity="0.8">Okuyama</text></svg>`,
+  'sato': `<svg viewBox="0 0 190 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="190" height="120"><rect width="190" height="120" fill="#fdf0e8"/><rect x="0" y="72" width="190" height="48" fill="#f0ddd4"/><rect x="130" y="8" width="20" height="60" rx="3" fill="#f4a0a0" opacity="0.7"/><rect x="152" y="8" width="20" height="60" rx="3" fill="#a0c8f4" opacity="0.7"/><rect x="108" y="8" width="20" height="60" rx="3" fill="#f4e0a0" opacity="0.7"/><rect x="15" y="32" width="55" height="88" rx="4" fill="#f8f2ee"/><circle cx="42" cy="28" r="14" fill="#c89878"/><path d="M28 24 Q28 38 30 44 Q35 48 42 48 Q49 48 54 44 Q56 38 56 24 Q50 16 42 16 Q34 16 28 24 Z" fill="#5a3820"/><path d="M30 22 Q42 18 54 22 Q52 26 42 26 Q32 26 30 22 Z" fill="#4a2810"/><rect x="18" y="46" width="48" height="74" rx="3" fill="#f5f2ef"/><path d="M30 46 L42 56 L54 46" stroke="#e0cfc8" stroke-width="1.5" fill="none"/><circle cx="28" cy="70" r="3" fill="#f4a0a0" opacity="0.5"/><circle cx="58" cy="80" r="2.5" fill="#a0c8f4" opacity="0.5"/><circle cx="32" cy="88" r="2" fill="#f4e0a0" opacity="0.6"/><rect x="56" y="65" width="4" height="22" rx="2" fill="#8a7060"/><rect x="54" y="83" width="8" height="6" rx="1" fill="#f4a0a0"/><text x="42" y="115" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#7a4830" opacity="0.8">Sato</text></svg>`,
+  'manabe': `<svg viewBox="0 0 190 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="190" height="120"><rect width="190" height="120" fill="#eef0f8"/><rect x="0" y="72" width="190" height="48" fill="#d8dce8"/><rect x="130" y="0" width="60" height="80" rx="4" fill="#d8dce8"/><rect x="140" y="8" width="40" height="64" rx="3" fill="#e8eaf4" opacity="0.8"/><rect x="145" y="20" width="30" height="8" rx="4" fill="#4858a8"/><rect x="145" y="30" width="30" height="8" rx="4" fill="#4858a8"/><rect x="155" y="14" width="10" height="6" rx="2" fill="#6878c8"/><rect x="155" y="38" width="10" height="6" rx="2" fill="#6878c8"/><path d="M155 16 Q152 12 155 8" stroke="#f0c840" stroke-width="1.5" fill="none" stroke-linecap="round"/><rect x="15" y="30" width="52" height="90" rx="4" fill="#f0eff8"/><circle cx="41" cy="26" r="14" fill="#c8a888"/><rect x="27" y="20" width="28" height="30" rx="2" fill="#2a1808"/><rect x="27" y="20" width="4" height="34" rx="1" fill="#3a2010"/><rect x="51" y="20" width="4" height="34" rx="1" fill="#3a2010"/><rect x="18" y="44" width="46" height="76" rx="3" fill="#eceef8"/><path d="M29 44 L41 54 L53 44" stroke="#c8cae0" stroke-width="1.5" fill="none"/><text x="41" y="115" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#4858a8" opacity="0.8">Manabe</text></svg>`,
+  'any_stylist': `<svg viewBox="0 0 190 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="190" height="120"><rect width="190" height="120" fill="#f5f0ec"/><rect x="0" y="72" width="190" height="48" fill="#e8e0d8"/><circle cx="50" cy="32" r="12" fill="#c8a888"/><rect x="30" y="48" width="40" height="50" rx="3" fill="#f0ebe6"/><circle cx="95" cy="28" r="14" fill="#d4b898"/><rect x="72" y="46" width="46" height="54" rx="3" fill="#fff8f4"/><circle cx="142" cy="32" r="12" fill="#b89878"/><rect x="122" y="48" width="40" height="50" rx="3" fill="#ede8e4"/><path d="M38 28 Q50 20 62 28" fill="#3a2010"/><path d="M81 24 Q95 15 109 24" fill="#2a1808"/><path d="M130 28 Q142 20 154 28" fill="#4a3020"/><path d="M95 6 L97 11 L102 11 L98 14 L100 19 L95 16 L90 19 L92 14 L88 11 L93 11 Z" fill="#c8846a"/><text x="95" y="115" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#7a5840" font-weight="700">指名なしでも OK</text></svg>`,
+  'cut_large': `<svg viewBox="0 0 190 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="190" height="120"><rect width="190" height="120" fill="#fdf5f0"/><rect x="0" y="75" width="190" height="45" fill="#f0e0d4"/><g transform="translate(95,55)"><path d="M-40,-15 Q-10,-5 0,0 Q10,-5 40,-15" stroke="#a0604a" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M-40,15 Q-10,5 0,0 Q10,5 40,15" stroke="#a0604a" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="0" cy="0" r="6" fill="#c8846a" stroke="#a0604a" stroke-width="1.5"/><circle cx="-48" cy="0" r="12" stroke="#c8846a" stroke-width="3" fill="none"/><circle cx="48" cy="0" r="12" stroke="#c8846a" stroke-width="3" fill="none"/><circle cx="-48" cy="0" r="5" fill="#c8846a" opacity="0.4"/><circle cx="48" cy="0" r="5" fill="#c8846a" opacity="0.4"/></g><path d="M40 10 Q60 30 65 50" stroke="#5a3820" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.7"/><path d="M65 8 Q80 28 82 50" stroke="#5a3820" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.8"/><path d="M90 6 Q100 26 100 50" stroke="#4a2810" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M115 8 Q110 28 108 50" stroke="#5a3820" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.8"/><path d="M140 10 Q130 30 125 50" stroke="#5a3820" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.7"/><line x1="20" y1="50" x2="170" y2="50" stroke="#c8846a" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.6"/><rect x="148" y="80" width="30" height="8" rx="2" fill="#d4a888"/><line x1="152" y1="80" x2="152" y2="88" stroke="#a07058" stroke-width="1"/><line x1="157" y1="80" x2="157" y2="88" stroke="#a07058" stroke-width="1"/><line x1="162" y1="80" x2="162" y2="88" stroke="#a07058" stroke-width="1"/><line x1="167" y1="80" x2="167" y2="88" stroke="#a07058" stroke-width="1"/><line x1="172" y1="80" x2="172" y2="88" stroke="#a07058" stroke-width="1"/><text x="20" y="108" font-family="Georgia,serif" font-size="12" font-weight="700" fill="#a0604a">デザインカット</text></svg>`,
+  'color_large': `<svg viewBox="0 0 190 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="190" height="120"><rect width="190" height="120" fill="#eef5e8"/><rect x="0" y="75" width="190" height="45" fill="#d8eccc"/><rect x="78" y="15" width="34" height="70" rx="8" fill="#c4e0a8" stroke="#4a8040" stroke-width="2"/><rect x="83" y="8" width="24" height="14" rx="4" fill="#a8cc88" stroke="#4a8040" stroke-width="1.5"/><rect x="81" y="4" width="28" height="8" rx="4" fill="#4a8040"/><rect x="80" y="38" width="30" height="44" rx="6" fill="#98cc78" opacity="0.8"/><rect x="82" y="50" width="26" height="32" rx="4" fill="#78b858" opacity="0.7"/><ellipse cx="95" cy="92" rx="4" ry="5" fill="#5aa040" opacity="0.9"/><ellipse cx="95" cy="104" rx="3" ry="3.5" fill="#4a9030" opacity="0.7"/><ellipse cx="95" cy="114" rx="2" ry="2.5" fill="#3a8020" opacity="0.5"/><path d="M78 50 Q48 38 38 20 Q48 14 58 28 Q68 40 78 50 Z" fill="#5aa048" stroke="#3a8030" stroke-width="1"/><path d="M78 50 Q55 42 50 28" stroke="#2d7020" stroke-width="1.5" fill="none"/><path d="M78 65 Q50 60 40 45 Q48 38 58 50 Q68 58 78 65 Z" fill="#4a9038" stroke="#3a8030" stroke-width="1"/><path d="M112 50 Q142 38 152 20 Q142 14 132 28 Q122 40 112 50 Z" fill="#5aa048" stroke="#3a8030" stroke-width="1"/><path d="M112 50 Q135 42 140 28" stroke="#2d7020" stroke-width="1.5" fill="none"/><path d="M112 65 Q140 60 150 45 Q142 38 132 50 Q122 58 112 65 Z" fill="#4a9038" stroke="#3a8030" stroke-width="1"/><circle cx="45" cy="95" r="5" fill="#a8d878" stroke="#4a8040" stroke-width="1"/><circle cx="55" cy="88" r="4" fill="#c8e898" stroke="#4a8040" stroke-width="1"/><circle cx="145" cy="95" r="5" fill="#a8d878" stroke="#4a8040" stroke-width="1"/><circle cx="135" cy="88" r="4" fill="#c8e898" stroke="#4a8040" stroke-width="1"/><text x="15" y="112" font-family="Georgia,serif" font-size="12" font-weight="700" fill="#2d7020">オーガニックカラー</text></svg>`,
+  'salon_interior': `<svg viewBox="0 0 190 90" fill="none" xmlns="http://www.w3.org/2000/svg" width="190" height="90"><rect width="190" height="90" fill="#f5ede4"/><rect x="0" y="60" width="190" height="30" fill="#e0c8b8"/><rect x="0" y="0" width="190" height="60" fill="#f8f0e8"/><line x1="0" y1="20" x2="190" y2="20" stroke="#d8c0a8" stroke-width="1"/><line x1="0" y1="40" x2="190" y2="40" stroke="#d8c0a8" stroke-width="0.5" opacity="0.5"/><line x1="38" y1="0" x2="38" y2="60" stroke="#d8c0a8" stroke-width="0.5" opacity="0.4"/><line x1="76" y1="0" x2="76" y2="60" stroke="#d8c0a8" stroke-width="0.5" opacity="0.4"/><line x1="114" y1="0" x2="114" y2="60" stroke="#d8c0a8" stroke-width="0.5" opacity="0.4"/><line x1="152" y1="0" x2="152" y2="60" stroke="#d8c0a8" stroke-width="0.5" opacity="0.4"/><rect x="10" y="5" width="35" height="50" rx="2" fill="#e0ece8" stroke="#c8b0a0" stroke-width="1"/><rect x="13" y="8" width="29" height="44" rx="1" fill="#cce4e0" opacity="0.7"/><rect x="15" y="52" width="28" height="38" rx="6" fill="#c4b0a8"/><rect x="18" y="46" width="22" height="10" rx="5" fill="#d4c0b8"/><rect x="145" y="5" width="35" height="50" rx="2" fill="#e0ece8" stroke="#c8b0a0" stroke-width="1"/><rect x="148" y="8" width="29" height="44" rx="1" fill="#cce4e0" opacity="0.7"/><rect x="147" y="52" width="28" height="38" rx="6" fill="#c4b0a8"/><rect x="150" y="46" width="22" height="10" rx="5" fill="#d4c0b8"/><rect x="65" y="42" width="60" height="48" rx="3" fill="#d4bca8"/><rect x="65" y="38" width="60" height="8" rx="2" fill="#c4aca0"/><rect x="72" y="28" width="8" height="14" rx="3" fill="#b4d0c4"/><rect x="83" y="26" width="10" height="16" rx="3" fill="#c8e0b8"/><rect x="96" y="28" width="8" height="14" rx="3" fill="#f0d8c8"/><rect x="107" y="30" width="7" height="12" rx="3" fill="#d4c8e8"/><circle cx="175" cy="68" r="10" fill="#5a9848" opacity="0.8"/><circle cx="183" cy="62" r="7" fill="#4a8840" opacity="0.7"/><rect x="172" y="75" width="6" height="15" rx="2" fill="#7a5030"/><circle cx="95" cy="0" r="20" fill="#f8e8c8" opacity="0.3"/></svg>`,
+  'products': `<svg viewBox="0 0 190 90" fill="none" xmlns="http://www.w3.org/2000/svg" width="190" height="90"><rect width="190" height="90" fill="#f0ece4"/><rect x="0" y="55" width="190" height="35" fill="#e4dcd0"/><rect x="10" y="38" width="170" height="5" rx="2" fill="#c8b098"/><rect x="10" y="62" width="170" height="5" rx="2" fill="#c8b098"/><rect x="10" y="38" width="3" height="29" fill="#b89878"/><rect x="177" y="38" width="3" height="29" fill="#b89878"/><rect x="22" y="18" width="12" height="22" rx="5" fill="#8ab8d8" stroke="#6898b8" stroke-width="1"/><rect x="24" y="14" width="8" height="6" rx="3" fill="#7aa8c8"/><rect x="38" y="15" width="14" height="25" rx="5" fill="#a8cc88" stroke="#88aa68" stroke-width="1"/><rect x="40" y="11" width="10" height="6" rx="3" fill="#98bc78"/><rect x="56" y="18" width="12" height="22" rx="5" fill="#e8c8a8" stroke="#c8a888" stroke-width="1"/><rect x="58" y="14" width="8" height="6" rx="3" fill="#d8b898"/><rect x="72" y="16" width="16" height="24" rx="5" fill="#d4b8e8" stroke="#b498c8" stroke-width="1"/><rect x="74" y="12" width="12" height="6" rx="3" fill="#c4a8d8"/><rect x="92" y="19" width="10" height="21" rx="4" fill="#f0d098" stroke="#d0b078" stroke-width="1"/><rect x="94" y="15" width="6" height="6" rx="2" fill="#e0c088"/><rect x="106" y="17" width="14" height="23" rx="5" fill="#c8e8e0" stroke="#98c8c0" stroke-width="1"/><rect x="108" y="13" width="10" height="6" rx="3" fill="#b8d8d0"/><rect x="25" y="44" width="18" height="20" rx="5" fill="#f8e0c8" stroke="#d8b8a8" stroke-width="1"/><rect x="47" y="44" width="14" height="20" rx="5" fill="#c0d8b8" stroke="#a0b898" stroke-width="1"/><rect x="65" y="44" width="16" height="20" rx="5" fill="#e8d8f0" stroke="#c8b8d0" stroke-width="1"/><rect x="85" y="44" width="12" height="20" rx="4" fill="#f0e8c8" stroke="#d0c8a8" stroke-width="1"/><rect x="101" y="44" width="18" height="20" rx="5" fill="#c8e0d8" stroke="#a8c0b8" stroke-width="1"/><rect x="123" y="44" width="14" height="20" rx="5" fill="#f0c8c8" stroke="#d0a8a8" stroke-width="1"/><rect x="135" y="16" width="44" height="24" rx="3" fill="#d4b888"/><ellipse cx="148" cy="26" rx="6" ry="8" fill="#8ab858" opacity="0.8"/><ellipse cx="162" cy="24" rx="5" ry="7" fill="#6aa040" opacity="0.8"/><ellipse cx="173" cy="27" rx="4" ry="6" fill="#4a8028" opacity="0.8"/></svg>`,
+};
+
+const ICONS = {
+  'welcome': `<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<circle cx="36" cy="36" r="32" fill="#faf7f2" stroke="#c8846a" stroke-width="1.5"/>
+<ellipse cx="36" cy="14" rx="4.5" ry="8" fill="#e8b4a0" opacity="0.7"/>
+<ellipse cx="36" cy="14" rx="4.5" ry="8" fill="#e8b4a0" opacity="0.7" transform="rotate(72 36 36)"/>
+<ellipse cx="36" cy="14" rx="4.5" ry="8" fill="#e8b4a0" opacity="0.7" transform="rotate(144 36 36)"/>
+<ellipse cx="36" cy="14" rx="4.5" ry="8" fill="#e8b4a0" opacity="0.7" transform="rotate(216 36 36)"/>
+<ellipse cx="36" cy="14" rx="4.5" ry="8" fill="#e8b4a0" opacity="0.7" transform="rotate(288 36 36)"/>
+<circle cx="36" cy="36" r="10" fill="#c8846a"/>
+<text x="36" y="40.5" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-weight="700" fill="white">H</text>
+<circle cx="36" cy="7" r="2" fill="#c8846a"/>
+<circle cx="36" cy="7" r="2" fill="#c8846a" transform="rotate(60 36 36)"/>
+<circle cx="36" cy="7" r="2" fill="#c8846a" transform="rotate(120 36 36)"/>
+<circle cx="36" cy="7" r="2" fill="#c8846a" transform="rotate(180 36 36)"/>
+<circle cx="36" cy="7" r="2" fill="#c8846a" transform="rotate(240 36 36)"/>
+<circle cx="36" cy="7" r="2" fill="#c8846a" transform="rotate(300 36 36)"/>
+</svg>`,
+  'coupon': `<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<rect x="6" y="20" width="60" height="32" rx="6" fill="#fffbeb" stroke="#b8860b" stroke-width="1.5"/>
+<circle cx="6" cy="36" r="6" fill="#fdf3ef" stroke="#b8860b" stroke-width="1.5"/>
+<circle cx="66" cy="36" r="6" fill="#fdf3ef" stroke="#b8860b" stroke-width="1.5"/>
+<line x1="22" y1="20" x2="22" y2="52" stroke="#b8860b" stroke-width="1" stroke-dasharray="3 3"/>
+<path d="M14,30 L15.4,34 L19.7,34 L16.4,36.8 L17.5,41.1 L14,38.6 L10.5,41.1 L11.6,36.8 L8.3,34 L12.6,34 Z" fill="#b8860b"/>
+<text x="46" y="33" text-anchor="middle" font-family="Georgia,serif" font-size="13" font-weight="700" fill="#b8860b">20%</text>
+<text x="46" y="46" text-anchor="middle" font-family="Georgia,serif" font-size="10" font-weight="700" fill="#92400e">OFF</text>
+<line x1="18" y1="33" x2="26" y2="39" stroke="#b8860b" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="18" y1="39" x2="26" y2="33" stroke="#b8860b" stroke-width="1.5" stroke-linecap="round"/>
+<circle cx="22" cy="36" r="1.5" fill="#fffbeb" stroke="#b8860b" stroke-width="1"/>
+<circle cx="55" cy="24" r="1.5" fill="#b8860b"/>
+<circle cx="60" cy="28" r="1" fill="#d4a020" opacity="0.6"/>
+</svg>`,
+  'stylist': `<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<circle cx="36" cy="22" r="10" fill="#c8846a"/>
+<path d="M26 18 Q20 10 24 6 Q28 2 32 8" stroke="#7a4a30" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M30 14 Q26 6 30 2 Q34 -1 36 6" stroke="#7a4a30" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M46 18 Q52 10 48 6 Q44 2 40 8" stroke="#7a4a30" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M22 36 Q20 28 28 32 L36 34 L44 32 Q52 28 50 36 L52 58 L20 58 Z" fill="#e8c4b0"/>
+<path d="M30 32 L36 38 L42 32" stroke="#c8846a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<g transform="translate(48,44) rotate(-30)">
+<path d="M0 0 L14 5" stroke="#a0604a" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M0 0 L14 -5" stroke="#a0604a" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="0" cy="0" r="2.5" fill="#c8846a"/>
+<circle cx="-6" cy="-5" r="4" stroke="#c8846a" stroke-width="1.8" fill="none"/>
+<circle cx="-6" cy="5" r="4" stroke="#c8846a" stroke-width="1.8" fill="none"/>
+</g>
+<rect x="23" y="44" width="2" height="10" rx="1" fill="#c8846a"/>
+</svg>`,
+  'cut': `<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<path d="M36 8 C22 8 16 20 16 30 C16 44 24 52 36 54 C48 52 56 44 56 30 C56 20 50 8 36 8 Z" fill="#f0ddd4"/>
+<path d="M20 24 C20 14 28 8 36 8 C44 8 52 14 52 24 C52 20 48 16 42 14 C38 12 34 12 30 14 C26 16 22 20 20 24 Z" fill="#7a4a30"/>
+<ellipse cx="17" cy="34" rx="3.5" ry="5" fill="#e8c4b0"/>
+<ellipse cx="55" cy="34" rx="3.5" ry="5" fill="#e8c4b0"/>
+<circle cx="30" cy="33" r="2" fill="#c8a090" opacity="0.4"/>
+<circle cx="42" cy="33" r="2" fill="#c8a090" opacity="0.4"/>
+<line x1="20" y1="24" x2="52" y2="24" stroke="#c8846a" stroke-width="1" stroke-dasharray="2 3" opacity="0.6"/>
+<g transform="translate(36,62)">
+<path d="M-14,0 Q-6,-5 0,-2 Q6,-5 14,0" stroke="#a0604a" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M-14,0 Q-6,5 0,2 Q6,5 14,0" stroke="#a0604a" stroke-width="3" fill="none" stroke-linecap="round"/>
+<circle cx="0" cy="0" r="3" fill="#c8846a"/>
+<circle cx="-18" cy="0" r="5" stroke="#c8846a" stroke-width="2" fill="none"/>
+<circle cx="18" cy="0" r="5" stroke="#c8846a" stroke-width="2" fill="none"/>
+</g>
+</svg>`,
+  'color': `<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<rect x="28" y="22" width="16" height="34" rx="4" fill="#d4e8c4" stroke="#4a8040" stroke-width="1.5"/>
+<rect x="31" y="14" width="10" height="10" rx="2" fill="#b8d4a8" stroke="#4a8040" stroke-width="1.5"/>
+<rect x="30" y="10" width="12" height="6" rx="3" fill="#4a8040"/>
+<rect x="30" y="30" width="12" height="24" rx="2" fill="#a0c890" opacity="0.7"/>
+<path d="M28 40 Q18 34 20 26 Q24 20 28 28 Q30 34 28 40 Z" fill="#5aa048"/>
+<path d="M28 40 Q23 34 24 27" stroke="#3a7030" stroke-width="1" fill="none"/>
+<path d="M44 40 Q54 34 52 26 Q48 20 44 28 Q42 34 44 40 Z" fill="#5aa048"/>
+<path d="M44 40 Q49 34 48 27" stroke="#3a7030" stroke-width="1" fill="none"/>
+<path d="M36 56 L33 62 L36 60 L39 62 Z" fill="#4a8040"/>
+<ellipse cx="36" cy="66" rx="2.5" ry="2.5" fill="#8ab878" opacity="0.8"/>
+<text x="36" y="47" text-anchor="middle" font-family="Georgia,serif" font-size="8" font-weight="700" fill="#2d6020" opacity="0.9">organic</text>
+</svg>`,
+  'perm': `<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<circle cx="36" cy="20" r="10" fill="#d4c4e8"/>
+<path d="M20 14 Q14 8 18 4" stroke="#7a50a8" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M14 20 Q6 18 8 10 Q12 4 18 10 Q14 16 14 20" stroke="#9a70c8" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<path d="M52 20 Q60 18 58 10 Q54 4 48 10 Q52 16 52 20" stroke="#9a70c8" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<path d="M52 14 Q58 8 54 4" stroke="#7a50a8" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M22 34 Q20 26 28 30 L36 32 L44 30 Q52 26 50 34 L52 60 L20 60 Z" fill="#e8d8f4"/>
+<path d="M30 30 L36 36 L42 30" stroke="#9a70c8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<path d="M24 44 Q28 40 32 44 Q28 48 24 44" stroke="#9a70c8" stroke-width="1.5" fill="none"/>
+<path d="M30 50 Q34 46 38 50 Q34 54 30 50" stroke="#9a70c8" stroke-width="1.5" fill="none"/>
+</svg>`,
+  'treatment': `<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<path d="M36 6 C28 6 20 14 20 24 C20 36 28 44 36 46 C44 44 52 36 52 24 C52 14 44 6 36 6 Z" fill="#f5ede8" stroke="#c8846a" stroke-width="1.5"/>
+<path d="M36 12 C30 12 26 18 26 24 C26 32 30 38 36 40 C42 38 46 32 46 24 C46 18 42 12 36 12 Z" fill="#e8c4b0" opacity="0.6"/>
+<circle cx="36" cy="24" r="6" fill="#c8846a" opacity="0.8"/>
+<circle cx="36" cy="24" r="3" fill="#a0604a"/>
+<path d="M20 24 Q14 20 16 12" stroke="#c8846a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<path d="M52 24 Q58 20 56 12" stroke="#c8846a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<rect x="24" y="50" width="24" height="8" rx="4" fill="#c8846a"/>
+<text x="36" y="56.5" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="white" font-weight="700">CARE</text>
+<circle cx="22" cy="16" r="2" fill="#e8b4a0" opacity="0.7"/>
+<circle cx="50" cy="16" r="2" fill="#e8b4a0" opacity="0.7"/>
+<circle cx="16" cy="30" r="1.5" fill="#e8b4a0" opacity="0.5"/>
+<circle cx="56" cy="30" r="1.5" fill="#e8b4a0" opacity="0.5"/>
+</svg>`,
+  'spa': `<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<path d="M36 8 C22 8 14 18 14 28 C14 38 20 46 36 50 C52 46 58 38 58 28 C58 18 50 8 36 8 Z" fill="#e8f4f0" stroke="#2d9e80" stroke-width="1.5"/>
+<ellipse cx="27" cy="32" rx="5" ry="3" fill="#a0d8c8" opacity="0.6"/>
+<ellipse cx="45" cy="32" rx="5" ry="3" fill="#a0d8c8" opacity="0.6"/>
+<path d="M22 40 Q36 44 50 40" stroke="#2d9e80" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<path d="M26 22 Q36 18 46 22" stroke="#2d9e80" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<path d="M28 28 Q36 52 44 28" stroke="#2d9e80" stroke-width="1.2" fill="none" opacity="0.4"/>
+<path d="M22 8 Q24 2 26 8" stroke="#5ac8a8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<path d="M34 4 Q36 -2 38 4" stroke="#5ac8a8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<path d="M46 8 Q48 2 50 8" stroke="#5ac8a8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<path d="M14 52 Q36 60 58 52 L56 64 Q36 70 16 64 Z" fill="#a0d8c8" opacity="0.5"/>
+<path d="M20 55 Q36 62 52 55" stroke="#2d9e80" stroke-width="1" fill="none" opacity="0.6"/>
+</svg>`,
+  'booking': `<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<rect x="10" y="16" width="52" height="48" rx="6" fill="#e8f4e8" stroke="#2d8040" stroke-width="1.5"/>
+<rect x="10" y="16" width="52" height="14" rx="6" fill="#2d8040"/>
+<rect x="10" y="22" width="52" height="8" fill="#2d8040"/>
+<line x1="24" y1="10" x2="24" y2="22" stroke="#2d8040" stroke-width="3" stroke-linecap="round"/>
+<line x1="48" y1="10" x2="48" y2="22" stroke="#2d8040" stroke-width="3" stroke-linecap="round"/>
+<rect x="18" y="38" width="10" height="8" rx="2" fill="#a0d0a8"/>
+<rect x="31" y="38" width="10" height="8" rx="2" fill="#a0d0a8"/>
+<rect x="44" y="38" width="10" height="8" rx="2" fill="#c8846a"/>
+<rect x="18" y="50" width="10" height="8" rx="2" fill="#a0d0a8"/>
+<rect x="31" y="50" width="10" height="8" rx="2" fill="#2d8040"/>
+<rect x="44" y="50" width="10" height="8" rx="2" fill="#a0d0a8"/>
+<text x="49" y="45.5" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="white" font-weight="700">予</text>
+</svg>`,
+  'salon_intro': `<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<rect x="8" y="28" width="56" height="36" rx="4" fill="#f5ede8" stroke="#c8846a" stroke-width="1.5"/>
+<path d="M8 36 L36 10 L64 36" fill="#e8c4b0" stroke="#c8846a" stroke-width="1.5"/>
+<rect x="28" y="44" width="16" height="20" rx="2" fill="#c8a090"/>
+<rect x="14" y="40" width="12" height="14" rx="2" fill="#e8d4c8"/>
+<rect x="46" y="40" width="12" height="14" rx="2" fill="#e8d4c8"/>
+<circle cx="36" cy="56" r="2" fill="#a0604a"/>
+<text x="36" y="22" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#c8846a" font-weight="700">Haru</text>
+<line x1="20" y1="28" x2="52" y2="28" stroke="#c8846a" stroke-width="0.8" opacity="0.4"/>
+</svg>`,
+  'point': `<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<rect x="6" y="16" width="60" height="40" rx="6" fill="#fffbeb" stroke="#b8860b" stroke-width="1.5"/>
+<rect x="6" y="16" width="60" height="14" rx="6" fill="#b8860b"/>
+<rect x="6" y="22" width="60" height="8" fill="#b8860b"/>
+<text x="36" y="27" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="white" font-weight="700" letter-spacing="1">POINT CARD</text>
+<circle cx="20" cy="42" r="7" fill="#e8d028" stroke="#b8860b" stroke-width="1.2"/>
+<text x="20" y="45.5" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#7a5000" font-weight="700">P</text>
+<circle cx="38" cy="42" r="7" fill="#f0e090" stroke="#b8860b" stroke-width="1.2" stroke-dasharray="2 2"/>
+<circle cx="56" cy="42" r="7" fill="#f0e090" stroke="#b8860b" stroke-width="1.2" stroke-dasharray="2 2"/>
+<text x="36" y="56" text-anchor="middle" font-family="Georgia,serif" font-size="7.5" fill="#92400e">毎日ポチポチしてね</text>
+</svg>`,
+  'access': `<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<rect x="8" y="8" width="56" height="56" rx="6" fill="#e8f0f8" stroke="#2860a8" stroke-width="1.5"/>
+<line x1="8" y1="36" x2="64" y2="36" stroke="#b8d0e8" stroke-width="1"/>
+<line x1="36" y1="8" x2="36" y2="64" stroke="#b8d0e8" stroke-width="1"/>
+<path d="M20 50 Q30 40 36 44 Q42 48 52 34" stroke="#2860a8" stroke-width="2" fill="none" stroke-linecap="round"/>
+<circle cx="36" cy="26" r="8" fill="#c8846a" stroke="#a0604a" stroke-width="1.2"/>
+<circle cx="36" cy="26" r="4" fill="white"/>
+<path d="M36 34 L34 42 L36 40 L38 42 Z" fill="#c8846a"/>
+<circle cx="20" cy="54" r="3" fill="#2860a8" opacity="0.5"/>
+<circle cx="52" cy="20" r="2" fill="#2860a8" opacity="0.4"/>
+</svg>`,
+};
+
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+const area = document.getElementById('chat-area');
+const now = new Date();
+function timeStr(){ const d=new Date(); return `午後 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+function scroll(){ setTimeout(()=>area.scrollTo({top:area.scrollHeight,behavior:'smooth'}),80); }
+
+function av(){
+  const d=document.createElement('div');d.className='av';
+  const img=document.createElement('img');
+  img.src='images/bot_avatar.png';
+  img.width=36;img.height=36;
+  img.onerror=function(){
+    d.removeChild(img);
+    d.innerHTML=`<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
+  };
+  d.appendChild(img);
+  return d;
+}
+
+let typingEl=null;
+function showTyping(){
+  const row=document.createElement('div');row.className='typing-row';row.id='typing';
+  row.appendChild(av());
+  const b=document.createElement('div');b.className='typing-bub';
+  b.innerHTML='<span></span><span></span><span></span>';
+  row.appendChild(b);area.appendChild(row);scroll();typingEl=row;
+}
+function hideTyping(){if(typingEl){typingEl.remove();typingEl=null;}const t=document.getElementById('typing');if(t)t.remove();}
+
+function botMsg(html,delay=650){
+  return new Promise(res=>{
+    showTyping();
+    setTimeout(()=>{
+      hideTyping();
+      const row=document.createElement('div');row.className='msg-row';
+      row.appendChild(av());
+      const col=document.createElement('div');col.className='msg-col';
+      const bub=document.createElement('div');bub.className='bubble';bub.innerHTML=html;
+      const ts=document.createElement('div');ts.className='msg-time';ts.textContent=timeStr();
+      col.appendChild(bub);col.appendChild(ts);row.appendChild(col);area.appendChild(row);scroll();res();
+    },delay);
+  });
+}
+
+function userMsg(text){
+  document.getElementById('chips-area')?.remove();
+  const row=document.createElement('div');row.className='msg-row user';
+  const col=document.createElement('div');col.className='msg-col';
+  const bub=document.createElement('div');bub.className='bubble';bub.textContent=text;
+  const ts=document.createElement('div');ts.className='msg-time';ts.textContent=timeStr();
+  col.appendChild(bub);col.appendChild(ts);row.appendChild(col);area.appendChild(row);scroll();
+}
+
+function addChips(chips){
+  document.getElementById('chips-area')?.remove();
+  const wrap=document.createElement('div');wrap.className='qr-chips';wrap.id='chips-area';
+  chips.forEach(c=>{
+    const b=document.createElement('button');b.className='qr-chip';b.textContent=c.label;
+    b.onclick=()=>{ wrap.remove(); userMsg(c.label); c.action(); };
+    wrap.appendChild(b);
+  });
+  area.appendChild(wrap);scroll();
+}
+
+function appendRow(el){area.appendChild(el);scroll();}
+
+function makeImgCard(imgKey,title,desc,links){
+  const card=document.createElement('div');card.className='img-card';
+  let ls=links.map(l=>`<div class="ic-link" onclick="handleLink('${l.a}')">${l.t}</div>`).join('');
+  const imgSrc2 = IMAGE_MAP[imgKey];
+  const art=!imgSrc2 && (CARD_ARTS[imgKey]||'');
+  const ico=(!imgSrc2 && !art && ICONS[imgKey])||ICONS['welcome'];
+  const imgHtml2 = imgSrc2
+    ? `<img src="${imgSrc2}" width="220" height="130" style="width:100%;height:130px;object-fit:cover;display:block" onerror="this.style.display='none'">`
+    : (art || ico);
+  card.innerHTML=`<div class="ic-img" style="background:transparent;padding:${imgSrc2?'0':art?'0':'8px'};overflow:hidden">${imgHtml2}</div>
+    <div class="ic-body"><div class="ic-title">${title}</div><div class="ic-desc">${desc}</div>${ls}</div>`;
+  return card;
+}
+
+function makeCaro(items){
+  const wrap=document.createElement('div');wrap.className='caro-wrap';
+  const inner=document.createElement('div');inner.className='caro-inner';
+  items.forEach(it=>{
+    const card=document.createElement('div');card.className='caro-card';
+    let ls=(it.links||[]).map(l=>`<div class="caro-link" onclick="handleLink('${l.a}')">${l.t} ▶</div>`).join('');
+    const imgKey = it.art||it.icon||it.img||'';
+    const imgSrc = IMAGE_MAP[imgKey];
+    const art = !imgSrc && (CARD_ARTS[imgKey]||'');
+    const ico = !imgSrc && !art && (ICONS[imgKey]||'');
+    const imgDiv = imgSrc
+      ? `<div class="caro-img" style="background:#f0e8e0;padding:0;overflow:hidden"><img src="${imgSrc}" width="190" height="120" style="width:100%;height:120px;object-fit:cover;display:block" onerror="this.parentElement.innerHTML=\'<div style=\\"width:100%;height:120px;background:#f0e8e0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999\\">画像なし</div>\'"></div>`
+      : art
+        ? `<div class="caro-img" style="background:transparent;padding:0;overflow:hidden">${art}</div>`
+        : ico
+          ? `<div class="caro-img" style="background:transparent;padding:10px;display:flex;align-items:center;justify-content:center">${ico}</div>`
+          : `<div class="caro-img ${it.img||''}"></div>`;
+    card.innerHTML=imgDiv+`<div class="caro-body"><div class="caro-title">${it.title}</div><div class="caro-desc">${it.desc||''}</div>${ls}</div>`;
+    inner.appendChild(card);
+  });
+  wrap.appendChild(inner);return wrap;
+}
+
+function botCard(card){
+  const row=document.createElement('div');row.className='msg-row';
+  row.appendChild(av());
+  const col=document.createElement('div');col.className='msg-col';
+  col.appendChild(card);
+  const ts=document.createElement('div');ts.className='msg-time';ts.textContent=timeStr();
+  col.appendChild(ts);row.appendChild(col);appendRow(row);
+}
+
+function botCaro(items){
+  const wrap=makeCaro(items);appendRow(wrap);
+}
+
+// ══════════════════════════════════════════
+// SURVEY
+// ══════════════════════════════════════════
+const profile={gender:'',age:'20代',concerns:[]};
+
+function surveyWrap(html){
+  const d=document.createElement('div');d.className='survey-wrap';d.id='survey-wrap';
+  d.innerHTML=html;area.appendChild(d);scroll();
+}
+function removeSurvey(){document.getElementById('survey-wrap')?.remove();}
+
+function surveyQ1(){
+  surveyWrap(`<div class="s-q">【質問 1/3】性別を教えてください♪</div>
+    <button class="s-opt" onclick="ansQ1('女性')">女性</button>
+    <button class="s-opt" onclick="ansQ1('男性')">男性</button>
+    <button class="s-opt" onclick="ansQ1('回答しない')">回答しない</button>`);
+}
+
+async function ansQ1(v){
+  removeSurvey();profile.gender=v;userMsg(`【${v}】`);
+  await botMsg('【質問 2/3】年齢を教えてください♪');
+  surveyWrap(`<div class="s-q">スライダーで選んでください</div>
+    <div class="age-row"><div class="age-num" id="age-disp">20代</div><input type="range" id="age-sl" min="1" max="7" step="1" value="2"></div>
+    <div class="tick-row"><span>10代</span><span>20代</span><span>30代</span><span>40代</span><span>50代</span><span>60代</span><span>70代+</span></div>
+    <button class="s-submit" onclick="ansQ2()">決定</button>`);
+  document.getElementById('age-sl').oninput=function(){
+    const a=['10代','20代','30代','40代','50代','60代','70代以上'];
+    document.getElementById('age-disp').textContent=a[this.value-1];
+  };
+}
+
+async function ansQ2(){
+  const a=['10代','20代','30代','40代','50代','60代','70代以上'];
+  const v=a[document.getElementById('age-sl').value-1];
+  removeSurvey();profile.age=v;userMsg(`【${v}】`);
+  await botMsg('【質問 3/3】髪の一番気になるお悩みを教えてください。');
+  const concerns=['くせ毛・うねり','細い・薄い','ダメージ・枝毛','硬い・多い','乾燥','頭皮が気になる','白髪','薄毛・抜け毛・ボリューム','特になし'];
+  const chips=concerns.map(c=>`<div class="c-chip" onclick="this.classList.toggle('sel')">${c}</div>`).join('');
+  surveyWrap(`<div class="s-q">複数選択できます</div><div class="concern-grid">${chips}</div><button class="s-submit" onclick="ansQ3()">決定</button>`);
+}
+
+async function ansQ3(){
+  const sel=[...document.querySelectorAll('.c-chip.sel')].map(e=>e.textContent);
+  const v=sel.length?sel.join('・'):'特になし';
+  removeSurvey();profile.concerns=sel;userMsg(`【${v}】`);
+  // Thank you card — tap to get gift
+  await botMsg('ご回答ありがとうございました！<br>プレゼントをお渡しします 😊');
+  const card=makeImgCard('welcome','初回特典をお受け取りください',
+    '20%OFFクーポンをはじめ豪華特典をプレゼント！',
+    [{t:'初回特典を手に入れる',a:'gift_unlock'}]);
+  botCard(card);
+}
+
+// ══════════════════════════════════════════
+// GIFT → COUPONS
+// ══════════════════════════════════════════
+async function showGift(){
+  userMsg('初回特典を手に入れる');
+  await botMsg('🎁 特典をお受け取りいただきました！<br>以下のクーポンをご利用ください。');
+  // 4-card coupon carousel
+  botCaro([
+    {img:'c1',icon:'coupon',title:'全メニュー20%OFF',desc:'物販以外でご利用いただけます。',links:[{t:'クーポンを手に入れる',a:'coupon_20'}]},
+    {img:'c2',icon:'spa',title:'ヘッドスパお試し15分券',desc:'抜け毛、首肩コリや眼精疲労改善にも。',links:[{t:'クーポンを手に入れる',a:'coupon_spa'}]},
+    {img:'c3',icon:'coupon',title:'【抽選】500円OFFクーポン',desc:'人気のホームケア商品をお得に手に入れるチャンス！',links:[{t:'まずは運試し',a:'coupon_lottery'}]},
+    {img:'c4',icon:'booking',title:'ご予約はこちらから',desc:'ご来店お待ちしております。',links:[{t:'ご予約はこちらから',a:'reservation'}]},
+  ]);
+  // Show rich menu now
+  setTimeout(()=>{
+    document.getElementById('rich-menu').style.display='block';
+    scroll();
+    setTimeout(()=>{
+      showRichMenuOpen();
+      showMainNav();
+    },400);
+  },800);
+}
+
+// ══════════════════════════════════════════
+// MAIN NAV — shown after gift
+// ══════════════════════════════════════════
+async function showMainNav(){
+  await botMsg('続けてご案内します。気になる項目をタップしてください 👇');
+  addChips([
+    {label:'スタイリスト紹介',action:()=>showStylists()},
+    {label:'スタイルメニュー',action:()=>showStyleMenu()},
+    {label:'ご予約',action:()=>showReservation()},
+    {label:'ポイントカード',action:()=>showPoint()},
+    {label:'アクセス',action:()=>showAccess()},
+  ]);
+}
+
+// ══════════════════════════════════════════
+// STYLIST LIST
+// ══════════════════════════════════════════
+async function showStylists(){
+  await botMsg('当店のスタイリストをご紹介します ✂️');
+  botCaro([
+    {img:'c1',icon:'stylist',art:'koshigaya',title:'越谷涼介（こしがや）',desc:'骨格にあった似合う、再現性の高いヘアスタイルを実現させます！',
+      links:[{t:'趣味・ハマっていること',a:'hobby'},{t:'指名して予約する',a:'reservation'}]},
+    {img:'c2',icon:'stylist',art:'okuyama',title:'奥山香織（おくやま）',desc:'髪質改善や艶髪ならお任せください！理想の髪質へと導きます！',
+      links:[{t:'趣味・ハマっていること',a:'hobby'},{t:'指名して予約する',a:'reservation'}]},
+    {img:'c3',icon:'stylist',art:'sato',title:'佐藤美沙（さとう）',desc:'パーソナルカラーの知識を活かして理想のヘアスタイルをご提案します♪',
+      links:[{t:'趣味・ハマっていること',a:'hobby'},{t:'指名して予約する',a:'reservation'}]},
+    {img:'c4',icon:'stylist',art:'manabe',title:'真鍋沙織（まなべ）',desc:'縮毛矯正、ミネコラ、3D増毛なら私にお任せください！',
+      links:[{t:'趣味・ハマっていること',a:'hobby'},{t:'指名して予約する',a:'reservation'}]},
+    {img:'c5',icon:'booking',art:'any_stylist',title:'指名なしでも OK',desc:'どのスタイリストも高技術。お任せください。',
+      links:[{t:'ご予約はこちらから',a:'reservation'}]},
+  ]);
+  setTimeout(()=>addNextChips(),1000);
+}
+
+// ══════════════════════════════════════════
+// STYLE MENU
+// ══════════════════════════════════════════
+async function showStyleMenu(){
+  await botMsg('当店のメニューをご紹介します 💇');
+  // Wide salon info cards first
+  const ww=document.createElement('div');ww.className='wide-wrap';
+  [{imgClass:'spa',artKey:'salon_interior',title:'Haru Tokyo のご紹介',desc:'表参道の隠れ家サロン。リラックスできる空間でぜひ素敵なひとときを♪',
+    links:[{t:'ご予約はこちらから',a:'reservation'},{t:'アクセス情報',a:'access'},{t:'紹介キャンペーン',a:'coupon_20'}]},
+   {imgClass:'prod',artKey:'products',title:'スタッフ・メニュー・商品をご紹介↓',desc:'',
+    links:[{t:'スタッフを見てみる',a:'stylist'},{t:'メニューはこちら',a:'style_menu_detail'},{t:'厳選商品をチェック',a:'style_menu_detail'}]}
+  ].forEach(c=>{
+    const card=document.createElement('div');card.className='wide-card';
+    let ls=c.links.map(l=>`<div class="wc-link" onclick="handleLink('${l.a}')">${l.t} ▶</div>`).join('');
+    const wcSrc = IMAGE_MAP[c.artKey];
+    const art=!wcSrc && (CARD_ARTS[c.artKey]||'');
+    const imgHtml= wcSrc
+      ? `<div class="wc-img" style="background:#f0e8e0;padding:0;overflow:hidden;height:90px"><img src="${wcSrc}" width="190" height="90" style="width:100%;height:90px;object-fit:cover;display:block" onerror="this.style.display='none'"></div>`
+      : art
+        ? `<div class="wc-img" style="background:transparent;padding:0;overflow:hidden;height:90px">${art}</div>`
+        : `<div class="wc-img ${c.imgClass}"></div>`;
+    card.innerHTML=imgHtml+`<div class="wc-body"><div class="wc-title">${c.title}</div>${c.desc?`<div style="font-size:10px;color:var(--muted);margin-bottom:4px">${c.desc}</div>`:''}${ls}</div>`;
+    ww.appendChild(card);
+  });
+  appendRow(ww);
+  // Menu carousel
+  botCaro([
+    {img:'c1',icon:'cut',art:'cut_large',title:'デザインカット',desc:'骨格に合わせた似合わせカット。ロング料金なし。',links:[{t:'ご予約はこちら',a:'reservation'}]},
+    {img:'c2',icon:'color',art:'color_large',title:'オーガニックカラー',desc:'天然由来のカラー剤。頭皮に優しく、艶やかな仕上がりに。',links:[{t:'ご予約はこちら',a:'reservation'}]},
+    {img:'c3',icon:'perm',title:'デジタルパーマ',desc:'形状記憶で再現性抜群。ダメージを最小限に。',links:[{t:'ご予約はこちら',a:'reservation'}]},
+    {img:'c4',icon:'treatment',title:'髪質改善トリートメント',desc:'クセ・うねり・パサつきを抑え艶やかな仕上がりに！',links:[{t:'ご予約はこちら',a:'reservation'}]},
+    {img:'c5',icon:'stylist',title:'お悩みのヘアメニュー',desc:'お気軽にLINEでご相談ください。',links:[{t:'LINEで相談する',a:'contact'}]},
+  ]);
+  setTimeout(()=>addNextChips(),1000);
+}
+
+// ══════════════════════════════════════════
+// RESERVATION
+// ══════════════════════════════════════════
+async function showReservation(){
+  await botMsg('ご予約について 📅<br>LINEからの予約は24時間いつでも受付中です。緊急の場合はお電話ください。');
+  const card=document.createElement('div');card.className='book-card';
+  card.innerHTML=`<div class="bk-img warm"><svg viewBox="0 0 48 48"><rect x="8" y="12" width="32" height="32" rx="3"/><path d="M16 6v10M32 6v10M8 22h32"/></svg></div>
+    <div class="bk-body">
+      <div class="bk-title">ご予約について</div>
+      <div class="bk-desc">LINEからの予約は24時間いつでも受付てます。緊急の場合はお電話ください。</div>
+      <a href="tel:0312345678" class="bk-btn btn-gold">電話で予約する ▶</a>
+      <button class="bk-btn btn-green" onclick="handleLink('reservation_bot')">LINEで予約する ▶</button>
+    </div>`;
+  botCard(card);
+  setTimeout(()=>addNextChips(),800);
+}
+
+// ══════════════════════════════════════════
+// POINT CARD
+// ══════════════════════════════════════════
+async function showPoint(){
+  await botMsg('ポイントカードのご案内 🪙<br>タップするだけで毎日ポイントが貯まります！');
+  const card=document.createElement('div');card.className='point-wrap';
+  card.innerHTML=`
+    <div class="pt-title">✦ POINT CARD ✦</div>
+    <div class="pt-sub">タップするだけで貯まる 👆</div>
+    <div class="pt-logo">Haru<br>Tokyo</div>
+    <div class="pt-tagline">ポイントごとに豪華プレゼント進呈中</div>
+    <div class="pt-grid">
+      <div class="pt-btn" onclick="handleLink('point_stamp')">
+        <div class="pt-badge">1日1回限定</div>
+        <div class="pt-btn-sub">ポイントを貯める</div>
+        <div class="pt-btn-main">毎日ポチポチしてね！▶</div>
+      </div>
+      <div class="pt-btn" onclick="handleLink('point_use')">
+        <div style="height:18px"></div>
+        <div class="pt-btn-sub">獲得状況・特典利用</div>
+        <div class="pt-btn-main">ご利用をお忘れなく！▶</div>
+      </div>
+    </div>`;
+  appendRow(card);
+  setTimeout(()=>addNextChips(),800);
+}
+
+// ══════════════════════════════════════════
+// ACCESS
+// ══════════════════════════════════════════
+async function showAccess(){
+  await botMsg('アクセス情報をお伝えします 📍');
+  const row=document.createElement('div');row.className='msg-row';
+  row.appendChild(av());
+  const col=document.createElement('div');col.className='msg-col';
+  const bub=document.createElement('div');bub.className='access-bub';
+  bub.innerHTML=`【アクセス情報】<br><br>当店は最寄りが「<strong>表参道駅</strong>」<br>A2出口より徒歩5分の距離にございます！<br><br>〒107-0061<br>東京都渋谷区神宮前X-XX-XX<br><br>道路を挟んで目の前に<br>〇〇ビルがございます♪<br><br>以下のURLをタップして地図をご確認のうえご来店ください。<br>↓ ↓ ↓ ↓ ↓
+    <div class="map-link" onclick="handleLink('open_map')">https://maps.google.com → Haru Tokyo</div>
+    <div class="map-preview">📍 Google Maps — 表参道駅 徒歩5分</div>`;
+  const ts=document.createElement('div');ts.className='msg-time';ts.textContent=timeStr();
+  col.appendChild(bub);col.appendChild(ts);row.appendChild(col);appendRow(row);
+  setTimeout(async ()=>{
+    // Final reservation card
+    await showReservationFinal();
+  },1000);
+}
+
+async function showReservationFinal(){
+  const card=document.createElement('div');card.className='book-card';
+  card.innerHTML=`<div class="bk-img warm"><svg viewBox="0 0 48 48"><rect x="8" y="12" width="32" height="32" rx="3"/><path d="M16 6v10M32 6v10M8 22h32"/></svg></div>
+    <div class="bk-body">
+      <div class="bk-title">ご予約はこちらから</div>
+      <div class="bk-desc">LINEから24時間いつでもご予約いただけます。お気軽にどうぞ。</div>
+      <a href="tel:0312345678" class="bk-btn btn-gold">電話で予約する ▶</a>
+      <button class="bk-btn btn-green" onclick="handleLink('reservation_bot')">LINEで予約する ▶</button>
+    </div>`;
+  botCard(card);
+  setTimeout(()=>showQR(),1000);
+}
+
+function showQR(){
+  const wrap=document.createElement('div');wrap.className='qr-wrap';
+  wrap.innerHTML=`
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">スマートフォンでご覧ください</div>
+    <canvas id="qr-c" width="140" height="140" style="display:block;margin:0 auto 10px;border-radius:6px"></canvas>
+    <div class="qr-note">LINEアプリを起動して、<br>QRコードを読み取ってください。<br><span style="color:var(--green);font-weight:700">https://taha300059.github.io/<br>LineHomePage/chat.html</span></div>
+    <div class="lm-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="#06C755"><path d="M12 2C6.48 2 2 6.04 2 11c0 3.19 1.73 6.01 4.36 7.77L5.5 22l3.5-1.5c.93.26 1.92.4 2.95.4 5.52 0 10-4.04 10-9S17.52 2 12 2z"/></svg>Powered by L Message</div>`;
+  appendRow(wrap);
+  setTimeout(()=>{
+    const c=document.getElementById('qr-c');if(!c)return;
+    const ctx=c.getContext('2d');
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,140,140);
+    ctx.fillStyle='#000';
+    function csq(x,y,s){ctx.fillRect(x,y,s,s);ctx.fillStyle='#fff';ctx.fillRect(x+Math.round(s*.14),y+Math.round(s*.14),Math.round(s*.72),Math.round(s*.72));ctx.fillStyle='#000';ctx.fillRect(x+Math.round(s*.28),y+Math.round(s*.28),Math.round(s*.44),Math.round(s*.44));}
+    csq(4,4,32);csq(104,4,32);csq(4,104,32);
+    let s=42;function rng(){s=(s*1664525+1013904223)&0xffffffff;return(s>>>0)/4294967296;}
+    for(let r=0;r<17;r++)for(let cc=0;cc<17;cc++){
+      const x=6+cc*8,y=6+r*8;
+      if((cc<5&&r<5)||(cc>11&&r<5)||(cc<5&&r>11))continue;
+      if(rng()>.45){ctx.fillStyle='#000';ctx.fillRect(x,y,7,7);}
+    }
+  },200);
+  setTimeout(()=>showFinalMsg(),1000);
+}
+
+async function showFinalMsg(){
+  await botMsg('以上がご案内の全内容です ✨<br>ご不明な点はお気軽にメッセージをどうぞ 😊<br>ご来店をお待ちしております！');
+  addChips([
+    {label:'ご予約する',action:()=>handleLink('reservation_bot')},
+    {label:'メニューをもう一度見る',action:()=>showStyleMenu()},
+    {label:'スタイリストを見る',action:()=>showStylists()},
+    {label:'クーポンを使う',action:()=>handleLink('coupon_20')},
+  ]);
+}
+
+// ══════════════════════════════════════════
+// NEXT CHIPS — shown after each section
+// ══════════════════════════════════════════
+function addNextChips(){
+  addChips([
+    {label:'スタイリスト紹介',action:()=>showStylists()},
+    {label:'スタイルメニュー',action:()=>showStyleMenu()},
+    {label:'ご予約',action:()=>showReservation()},
+    {label:'ポイントカード',action:()=>showPoint()},
+    {label:'アクセス',action:()=>showAccess()},
+  ]);
+}
+
+// ══════════════════════════════════════════
+// RICH MENU
+// ══════════════════════════════════════════
+function showRichMenuOpen(){
+  const body=document.getElementById('rm-body');
+  const toggle=document.getElementById('rm-toggle');
+  body.style.display='block';toggle.classList.add('open');
+}
+function toggleRM(){
+  const body=document.getElementById('rm-body');
+  const toggle=document.getElementById('rm-toggle');
+  const open=body.style.display==='none';
+  body.style.display=open?'block':'none';
+  toggle.classList.toggle('open',open);
+}
+function rmAction(a){
+  if(a==='stylist')showStylists();
+  else if(a==='style_menu')showStyleMenu();
+  else if(a==='reservation')showReservation();
+  else if(a==='point')showPoint();
+  else if(a==='access')showAccess();
+  else if(a==='coupon')handleLink('coupon_20');
+}
+
+// ══════════════════════════════════════════
+// LINK HANDLER
+// ══════════════════════════════════════════
+function handleLink(a){
+  if(a==='start_survey'){ userMsg('回答して特典GET'); setTimeout(async()=>{ await botMsg('【質問 1/3】性別を教えてください♪'); surveyQ1(); },400); return; }
+  if(a==='gift_unlock'){ showGift(); return; }
+  if(a==='reservation'||a==='reservation_bot'){
+    userMsg('予約したい');
+    setTimeout(async()=>{
+      await botMsg('ご予約の確認です。以下のボタンをタップして予約フォームへお進みください。');
+      const row=document.createElement('div');row.className='msg-row';
+      row.appendChild(av());
+      const col=document.createElement('div');col.className='msg-col';
+      const card=document.createElement('div');card.className='book-card';
+      card.innerHTML=`<div class="bk-img warm" style="background:#c8d4c8;padding:0;overflow:hidden"><img src="images/booking_hero.png" width="240" height="130" style="width:100%;height:130px;object-fit:cover;display:block" onerror="this.style.display='none'"></div>
+        <div class="bk-body">
+          <div class="bk-title">ご予約はこちらから</div>
+          <div class="bk-desc">LINEから24時間いつでも受付中です。<br>緊急の場合はお電話ください。</div>
+          <a href="tel:0312345678" class="bk-btn btn-gold">📞 電話で予約する（03-1234-5678）</a>
+          <button class="bk-btn btn-green" onclick="window.location.href='reservation.html'">📅 オンラインで予約する</button>
+        </div>`;
+      col.appendChild(card);
+      const ts=document.createElement('div');ts.className='msg-time';ts.textContent=timeStr();
+      col.appendChild(ts);row.appendChild(col);area.appendChild(row);scroll();
+      addNextChips();
+    },400);
+    return;
+  }
+  if(a==='stylist'){ showStylists(); return; }
+  if(a==='style_menu'||a==='style_menu_detail'){ showStyleMenu(); return; }
+  if(a==='access'){ showAccess(); return; }
+  if(a==='coupon_20'){ userMsg('20%OFFクーポンを受け取る'); setTimeout(async()=>{ await botMsg('20%OFFクーポンをお受け取りいただきました 🎁<br>ご来店時にスタッフにお見せください。'); addNextChips(); },400); }
+  if(a==='coupon_spa'){ userMsg('ヘッドスパ15分券を受け取る'); setTimeout(async()=>{ await botMsg('ヘッドスパお試し15分券をお受け取りいただきました 🌿'); addNextChips(); },400); }
+  if(a==='coupon_lottery'){ userMsg('抽選に挑戦する'); setTimeout(async()=>{ await botMsg('🎰 抽選結果...　<strong>当選！</strong><br>500円OFFクーポンをゲットしました！'); addNextChips(); },400); }
+  if(a==='open_map'){ window.open('https://maps.google.com','_blank'); }
+  if(a==='point_stamp'){ userMsg('ポイントを貯める'); setTimeout(async()=>{ await botMsg('本日分のポイントを付与しました！ 🪙<br>現在：<strong>1ポイント</strong><br>10ポイントで特典プレゼント！'); },400); }
+  if(a==='point_use'){ userMsg('ポイント確認'); setTimeout(async()=>{ await botMsg('現在の獲得ポイント：<strong>1ポイント</strong><br>次の特典まであと9ポイントです 🎁'); },400); }
+  if(a==='hobby'){ userMsg('趣味・ハマっていることを見る'); setTimeout(async()=>{ await botMsg('スタイリストの趣味ページは準備中です。お楽しみに！✨'); },400); }
+  if(a==='contact'){ userMsg('LINEで相談する'); setTimeout(async()=>{ await botMsg('お気軽にメッセージをどうぞ！担当スタイリストよりご連絡いたします 😊'); },400); }
+}
+
+// ══════════════════════════════════════════
+// INPUT / KEYWORD AUTO-REPLY
+// ══════════════════════════════════════════
+const KW={
+  '予約':()=>showReservation(),
+  'メニュー':()=>showStyleMenu(),
+  'スタイル':()=>showStyleMenu(),
+  'スタッフ':()=>showStylists(),
+  'スタイリスト':()=>showStylists(),
+  'クーポン':()=>handleLink('coupon_20'),
+  'アクセス':()=>showAccess(),
+  '場所':()=>showAccess(),
+  'ポイント':()=>showPoint(),
+};
+const AUTO_REPLY='メッセージありがとうございます！<br>申し訳ありませんが、このアカウントでは個別のお問い合わせを受け付けておりません。<br>次の配信までお待ちください 😊';
+
+function focusInput(wrap){ wrap.querySelector('input').focus(); }
+
+async function sendMsg(){
+  const inp=document.getElementById('msg-input');
+  const text=inp.value.trim(); if(!text) return;
+  inp.value=''; userMsg(text);
+  document.getElementById('chips-area')?.remove();
+  const match=Object.keys(KW).find(k=>text.includes(k));
+  if(match){ setTimeout(()=>KW[match](),400); return; }
+  await botMsg(AUTO_REPLY,700);
+}
+
+// ══════════════════════════════════════════
+// BOOT SEQUENCE
+// ══════════════════════════════════════════
+async function boot(){
+  await botMsg(`【20%割引クーポンプレゼント！】<br><br>見とれてしまう髪を実現させる、<strong>Haru Tokyo</strong>です ☀️<br><br>友だち登録ありがとうございます！<br><br>こちらのLINEでは、<br>①お役立ちヘアコラム<br>②期間限定クーポン<br>③プロが厳選！ヘアグッツ<br><br>などお届けしていきます ✉️<br><br>チャットによる相談や予約も対応しております 😊 気軽にLINEくださいね。<br><br>では、早速ですがアンケートへのご協力お願いします 🙏<br><small style="color:var(--muted)">※デモアカウントのため返答はしません※</small>`, 900);
+
+  // Survey invite card
+  const card=makeImgCard('salon_intro',
+    '3問の簡単アンケート回答で20%割引券など豪華特典プレゼント！',
+    '',
+    [{t:'回答して特典GET',a:'start_survey'}]);
+  botCard(card);
+}
+
+
+setTimeout(()=>boot(), 500);
+</script>
+</body>
+</html>
