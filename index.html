@@ -1,258 +1,567 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-  <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "way8qilarj");
-</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Haru Tokyo | LINE公式アカウント</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#06C755;
+  --green-dk:#05a847;
+  --bg:#f5f5f5;
+  --white:#ffffff;
+  --text:#111;
+  --muted:#666;
+  --border:#e5e5e5;
+  --rose:#c8846a;
+  --rose-lt:#fdf3ef;
+  --cream:#faf8f5;
+  --font:'Noto Sans JP',sans-serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:390px;margin:0 auto;min-height:100vh;-webkit-font-smoothing:antialiased}
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mishona PDM Checklist</title>
-  <style>
-    :root {
-      --ring-size: 120px;
-      --ring-stroke: 8px;
-      --ring-radius: 52;
-      --ring-circumference: 326.73;
-      --ring-progress: 0;
-      --ring-offset: var(--ring-circumference);
-      --ring-bg: #e5e7eb;
-      --ring-fill: #22c55e;
-      --ring-text: #111827;
-      --body-bg: #f9fafb;
-      --card-bg: #ffffff;
-      --card-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      --check-accent: #22c55e;
-      --text-primary: #111827;
-      --text-secondary: #6b7280;
-    }
+/* ── LINE top bar ── */
+.line-topbar{
+  background:#fff;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:50;
+}
+.topbar-back{display:flex;align-items:center;gap:4px;color:var(--green);font-size:14px;font-weight:500;cursor:pointer}
+.topbar-back svg{width:18px;height:18px}
+.topbar-title{font-size:15px;font-weight:700;color:var(--text)}
+.topbar-more{width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.topbar-more svg{width:20px;height:20px;color:var(--text)}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ── Cover ── */
+.cover{
+  width:100%;height:200px;
+  background:linear-gradient(160deg,#f5ede8 0%,#e8d0c4 50%,#d4b8a8 100%);
+  position:relative;overflow:hidden;
+}
+.cover-pattern{
+  position:absolute;inset:0;
+  background-image:radial-gradient(circle at 30% 40%,rgba(200,132,106,.18) 0%,transparent 50%),
+                   radial-gradient(circle at 75% 70%,rgba(200,132,106,.12) 0%,transparent 40%);
+}
+.cover-text{
+  position:absolute;bottom:16px;left:20px;
+  font-size:28px;font-weight:300;letter-spacing:6px;color:rgba(100,60,40,.55);
+  font-style:italic;
+}
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--body-bg);
-      color: var(--text-primary);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      padding: 2rem 1rem;
-    }
+/* ── Profile block ── */
+.profile-block{
+  background:var(--white);
+  padding:0 16px 20px;
+  border-bottom:8px solid var(--bg);
+  position:relative;
+}
+.avatar-wrap{
+  display:flex;align-items:flex-end;gap:12px;
+  margin-top:-36px;margin-bottom:14px;
+}
+.avatar{
+  width:72px;height:72px;border-radius:50%;
+  border:3px solid var(--white);
+  background:linear-gradient(135deg,#e8c4b0,#c8846a);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12);
+  overflow:hidden;
+}
+.avatar svg{width:40px;height:40px}
+.friend-count{font-size:12px;color:var(--muted);padding-bottom:4px}
+.friend-count span{font-weight:700;color:var(--text)}
 
-    .app {
-      width: 100%;
-      max-width: 480px;
-    }
+.profile-name{font-size:20px;font-weight:700;margin-bottom:4px;letter-spacing:-.3px}
+.profile-handle{font-size:12px;color:var(--muted);margin-bottom:12px}
+.profile-bio{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px}
 
-    h1 {
-      font-size: 1.5rem;
-      margin-bottom: 1.5rem;
-      text-align: center;
-    }
+/* ── Action buttons ── */
+.action-row{display:flex;gap:8px;margin-bottom:4px}
+.btn-add{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--green);color:var(--white);
+  border:none;border-radius:8px;padding:12px;
+  font-family:var(--font);font-size:14px;font-weight:700;
+  cursor:pointer;transition:background .15s;
+}
+.btn-add:active{background:var(--green-dk)}
+.btn-add svg{width:20px;height:20px;flex-shrink:0}
+.btn-chat{
+  width:48px;height:48px;border-radius:8px;
+  border:1.5px solid var(--border);background:var(--white);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  flex-shrink:0;
+}
+.btn-chat svg{width:22px;height:22px;color:var(--text)}
 
-    /* Summary card with progress ring */
-    .summary {
-      background: var(--card-bg);
-      border-radius: 12px;
-      box-shadow: var(--card-shadow);
-      padding: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
+/* ── Tab bar ── */
+.tabs{
+  background:var(--white);
+  display:flex;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:53px;z-index:40;
+}
+.tab{
+  flex:1;text-align:center;padding:13px 0;
+  font-size:13px;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2.5px solid transparent;
+  transition:all .15s;
+}
+.tab.active{color:var(--green);border-bottom-color:var(--green)}
 
-    .progress-ring {
-      width: var(--ring-size);
-      height: var(--ring-size);
-      flex-shrink: 0;
-      position: relative;
-    }
+/* ── Tab content ── */
+.tab-content{display:none}
+.tab-content.active{display:block}
 
-    .progress-ring svg {
-      width: 100%;
-      height: 100%;
-      transform: rotate(-90deg);
-    }
+/* ── HOME tab ── */
+.section{padding:16px 16px 0}
+.section-label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
 
-    .progress-ring__bg {
-      fill: none;
-      stroke: var(--ring-bg);
-      stroke-width: var(--ring-stroke);
-    }
+/* Campaign card */
+.camp-card{
+  background:var(--white);border-radius:12px;overflow:hidden;
+  box-shadow:0 1px 6px rgba(0,0,0,.07);margin-bottom:12px;
+}
+.camp-img{
+  height:160px;
+  background:linear-gradient(135deg,#f5ede8,#dbbca8);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.camp-badge{
+  position:absolute;top:10px;right:10px;
+  background:var(--rose);color:#fff;
+  font-size:10px;font-weight:700;padding:4px 10px;border-radius:99px;letter-spacing:.5px;
+}
+.camp-body{padding:14px}
+.camp-title{font-size:14px;font-weight:700;margin-bottom:6px}
+.camp-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px}
+.camp-price{display:flex;align-items:baseline;gap:6px}
+.price-new{font-size:20px;font-weight:700;color:var(--rose)}
+.price-tax{font-size:11px;color:var(--muted)}
+.price-old{font-size:12px;color:#bbb;text-decoration:line-through}
 
-    .progress-ring__fill {
-      fill: none;
-      stroke: var(--ring-fill);
-      stroke-width: var(--ring-stroke);
-      stroke-linecap: round;
-      stroke-dasharray: var(--ring-circumference);
-      stroke-dashoffset: var(--ring-offset);
-      transition: stroke-dashoffset 0.4s ease;
-    }
+/* News list */
+.news-item{
+  background:var(--white);border-radius:10px;
+  padding:14px;margin-bottom:8px;
+  display:flex;gap:12px;align-items:flex-start;
+  box-shadow:0 1px 4px rgba(0,0,0,.05);
+}
+.news-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--rose);
+  flex-shrink:0;margin-top:5px;
+}
+.news-title{font-size:13px;font-weight:500;margin-bottom:3px}
+.news-date{font-size:11px;color:var(--muted)}
 
-    .progress-ring__label {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--ring-text);
-    }
+/* Rich menu */
+.richmenu{
+  background:var(--white);border-radius:12px;overflow:hidden;
+  box-shadow:0 1px 6px rgba(0,0,0,.07);margin-bottom:16px;
+}
+.rm-header{
+  background:var(--rose-lt);padding:10px 14px;
+  font-size:11px;font-weight:700;color:var(--rose);letter-spacing:1px;
+  text-align:center;
+}
+.rm-grid{display:grid;grid-template-columns:1fr 1fr 1fr}
+.rm-btn{
+  padding:18px 8px;text-align:center;
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  cursor:pointer;background:var(--white);
+  transition:background .12s;active-scale:.97;
+}
+.rm-btn:nth-child(3n){border-right:none}
+.rm-btn:nth-child(n+4){border-bottom:none}
+.rm-btn:active{background:var(--rose-lt)}
+.rm-icon{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--rose-lt);margin:0 auto 8px;
+  display:flex;align-items:center;justify-content:center;
+}
+.rm-icon svg{width:18px;height:18px;stroke:var(--rose);fill:none;stroke-width:1.8;stroke-linecap:round}
+.rm-label{font-size:11px;font-weight:500;color:var(--text)}
 
-    .summary-text h2 {
-      font-size: 1.1rem;
-      margin-bottom: 0.25rem;
-    }
+/* ── MENU tab ── */
+.menu-cat{padding:16px 16px 4px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;border-bottom:1px solid var(--border)}
+.menu-row{
+  background:var(--white);padding:14px 16px;
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--border);
+}
+.menu-left{}
+.menu-name{font-size:14px;font-weight:500;margin-bottom:3px}
+.menu-time{font-size:11px;color:var(--muted)}
+.menu-right{text-align:right;flex-shrink:0}
+.menu-price{font-size:15px;font-weight:700;color:var(--text)}
+.menu-tax{font-size:10px;color:var(--muted)}
 
-    .summary-text p {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-    }
+/* ── INFO tab ── */
+.info-section{background:var(--white);margin-bottom:8px}
+.info-row{
+  display:flex;gap:0;padding:14px 16px;
+  border-bottom:1px solid var(--border);align-items:flex-start;
+}
+.info-row:last-child{border-bottom:none}
+.info-key{
+  font-size:12px;color:var(--muted);font-weight:500;
+  min-width:80px;padding-top:1px;
+}
+.info-val{font-size:13px;color:var(--text);line-height:1.7}
+.map-placeholder{
+  height:160px;background:#e8e8e8;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--muted);
+  border-radius:10px;margin:0 16px 16px;
+  border:1px solid var(--border);
+}
+.map-placeholder svg{width:24px;height:24px;margin-right:8px;opacity:.4}
 
-    /* Checklist */
-    .checklist {
-      background: var(--card-bg);
-      border-radius: 12px;
-      box-shadow: var(--card-shadow);
-      padding: 0.5rem 0;
-      list-style: none;
-    }
+/* ── Coupon tab ── */
+.coupon-card{
+  background:var(--white);border-radius:12px;overflow:hidden;
+  box-shadow:0 1px 6px rgba(0,0,0,.07);margin:16px 16px 12px;
+}
+.coupon-top{
+  background:linear-gradient(135deg,var(--rose),#a0604a);
+  padding:20px;color:#fff;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.coupon-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.coupon-desc{font-size:12px;opacity:.85;line-height:1.6}
+.coupon-val{
+  font-size:30px;font-weight:700;text-align:right;
+  line-height:1;
+}
+.coupon-val-unit{font-size:12px;font-weight:400;opacity:.8}
+.coupon-bottom{
+  padding:14px 16px;display:flex;justify-content:space-between;align-items:center;
+  border-top:1px dashed var(--border);
+}
+.coupon-expire{font-size:11px;color:var(--muted)}
+.coupon-btn{
+  background:var(--green);color:#fff;
+  border:none;border-radius:6px;padding:8px 16px;
+  font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;
+}
 
-    .checklist li {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1.25rem;
-      border-bottom: 1px solid #f3f4f6;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.15s;
-    }
+.coupon-card2{
+  background:var(--white);border-radius:12px;overflow:hidden;
+  box-shadow:0 1px 6px rgba(0,0,0,.07);margin:0 16px 12px;
+}
+.coupon-top2{
+  background:linear-gradient(135deg,#7c6ab0,#5a4e8a);
+  padding:20px;color:#fff;
+  display:flex;justify-content:space-between;align-items:center;
+}
 
-    .checklist li:last-child { border-bottom: none; }
-    .checklist li:hover { background: #f9fafb; }
-
-    .checklist input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--check-accent);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .checklist label {
-      cursor: pointer;
-      flex: 1;
-      transition: color 0.2s, text-decoration 0.2s;
-    }
-
-    .checklist input:checked + label {
-      text-decoration: line-through;
-      color: var(--text-secondary);
-    }
-
-    .actions {
-      display: flex;
-      justify-content: center;
-      margin-top: 1rem;
-    }
-
-    .reset-button {
-      border: 0;
-      border-radius: 8px;
-      background: var(--ring-fill);
-      color: #ffffff;
-      cursor: pointer;
-      font: inherit;
-      font-weight: 600;
-      padding: 0.625rem 1rem;
-    }
-  </style>
+/* ── Bottom nav (LINE style) ── */
+.bottom-nav{display:none}
+</style>
 </head>
 <body>
-  <div class="app">
-    <h1>Mishona PDM Checklist</h1>
 
-    <div class="summary">
-      <div class="progress-ring" id="progressRing">
-        <svg viewBox="0 0 120 120">
-          <circle class="progress-ring__bg" cx="60" cy="60" r="52" />
-          <circle class="progress-ring__fill" cx="60" cy="60" r="52" />
-        </svg>
-        <div class="progress-ring__label" id="progressLabel">0%</div>
-      </div>
-      <div class="summary-text">
-        <h2 id="summaryTitle">0 of 5 complete</h2>
-        <p>Check items off to track progress</p>
-      </div>
+<!-- LINE Top Bar -->
+<div class="line-topbar">
+  <div class="topbar-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    トーク
+  </div>
+  <div class="topbar-title">Haru Tokyo</div>
+  <div class="topbar-more">
+    <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+  </div>
+</div>
+
+<!-- Cover Photo -->
+<div class="cover">
+  <div class="cover-pattern"></div>
+  <div class="cover-text">Haru Tokyo</div>
+</div>
+
+<!-- Profile Block -->
+<div class="profile-block">
+  <div class="avatar-wrap">
+    <div class="avatar">
+      <svg viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="20" fill="#e8c4b0"/>
+        <path d="M20 8C20 8 13 13 13 20C13 24.418 16.134 28 20 28C23.866 28 27 24.418 27 20C27 13 20 8 20 8Z" fill="white" opacity=".7"/>
+        <circle cx="20" cy="20" r="4" fill="#c8846a" opacity=".8"/>
+      </svg>
     </div>
+    <div class="friend-count"><span>1,284</span> 人が友だち追加済み</div>
+  </div>
+  <div class="profile-name">Haru Tokyo</div>
+  <div class="profile-handle">@harutokyo | 美容室 · 渋谷区</div>
+  <div class="profile-bio">表参道の隠れ家サロン「Haru Tokyo」。カラー・トリートメントを得意とするスタイリストが、あなただけの美髪をつくります。LINEから24時間ご予約受付中！</div>
+  <div class="action-row">
+    <button class="btn-add" onclick="addFriend()">
+      <svg viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.04 2 11c0 3.19 1.73 6.01 4.36 7.77L5.5 22l3.5-1.5c.93.26 1.92.4 2.95.4 5.52 0 10-4.04 10-9S17.52 2 12 2z"/></svg>
+      友だち追加
+    </button>
+    <div class="btn-chat" onclick="switchTab('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    </div>
+  </div>
+</div>
 
-    <ul class="checklist" id="checklist">
-      <li>
-        <input type="checkbox" id="item1">
-        <label for="item1">Define project requirements</label>
-      </li>
-      <li>
-        <input type="checkbox" id="item2">
-        <label for="item2">Create wireframes</label>
-      </li>
-      <li>
-        <input type="checkbox" id="item3">
-        <label for="item3">Build prototype</label>
-      </li>
-      <li>
-        <input type="checkbox" id="item4">
-        <label for="item4">User testing</label>
-      </li>
-      <li>
-        <input type="checkbox" id="item5">
-        <label for="item5">Final review &amp; launch</label>
-      </li>
-    </ul>
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('home')" id="tab-home">ホーム</div>
+  <div class="tab" href="reservation.html" id="tab-menu">メニュー</div>
+  <div class="tab" onclick="switchTab('coupon')" id="tab-coupon">クーポン</div>
+  <div class="tab" onclick="switchTab('info')" id="tab-info">店舗情報</div>
+</div>
 
-    <div class="actions">
-      <button class="reset-button" type="button" onclick="resetAll()">Reset all</button>
+<!-- ═══ HOME ═══ -->
+<div class="tab-content active" id="content-home">
+
+  <!-- Rich Menu -->
+  <div style="padding:16px 16px 0">
+    <div class="section-label">クイックメニュー</div>
+    <div class="richmenu">
+      <div class="rm-header">タップしてご利用ください</div>
+      <div class="rm-grid">
+        <div class="rm-btn" onclick="window.location.href='reservation.html'">
+          <div class="rm-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </div>
+          <div class="rm-label">予約する</div>
+        </div>
+        <div class="rm-btn" onclick="window.location.href='reservation.html'">
+          <div class="rm-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+          </div>
+          <div class="rm-label">メニュー</div>
+        </div>
+        <div class="rm-btn" onclick="switchTab('info')">
+          <div class="rm-icon">
+            <svg viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><circle cx="12" cy="11" r="3"/></svg>
+          </div>
+          <div class="rm-label">アクセス</div>
+        </div>
+        <div class="rm-btn" onclick="switchTab('coupon')">
+          <div class="rm-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
+          </div>
+          <div class="rm-label">クーポン</div>
+        </div>
+        <div class="rm-btn">
+          <div class="rm-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M17 14v3h3M14 21h3"/></svg>
+          </div>
+          <div class="rm-label">スタイル</div>
+        </div>
+        <div class="rm-btn">
+          <div class="rm-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          </div>
+          <div class="rm-label">よくある質問</div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script>
-    const checklist = document.getElementById('checklist');
-    const ring = document.getElementById('progressRing');
-    const label = document.getElementById('progressLabel');
-    const title = document.getElementById('summaryTitle');
-    const CIRCUMFERENCE = 2 * Math.PI * 52; // matches r="52"
+  <!-- Campaign -->
+  <div class="section">
+    <div class="section-label">キャンペーン</div>
+    <div class="camp-card">
+      <div class="camp-img">
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+          <circle cx="28" cy="28" r="26" fill="#c8846a" opacity=".12"/>
+          <path d="M28 12C28 12 18 19 18 28C18 33.523 22.477 38 28 38C33.523 38 38 33.523 38 28C38 19 28 12 28 12Z" fill="#c8846a" opacity=".3"/>
+          <circle cx="28" cy="28" r="6" fill="#c8846a" opacity=".7"/>
+        </svg>
+        <div class="camp-badge">期間限定</div>
+      </div>
+      <div class="camp-body">
+        <div class="camp-title">🌸 春の美髪キャンペーン</div>
+        <div class="camp-desc">カラー＋トリートメントのスペシャルセット。春の乾燥・ダメージに負けない艶髪へ。4月末まで限定価格でご提供します。</div>
+        <div class="camp-price">
+          <span class="price-new">¥8,800</span>
+          <span class="price-tax">税込</span>
+          <span class="price-old">通常¥13,200</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    function updateProgress() {
-      const boxes = checklist.querySelectorAll('input[type="checkbox"]');
-      const checked = checklist.querySelectorAll('input[type="checkbox"]:checked').length;
-      const total = boxes.length;
-      const pct = total === 0 ? 0 : Math.round((checked / total) * 100);
-      const offset = CIRCUMFERENCE - (CIRCUMFERENCE * pct / 100);
+  <!-- News -->
+  <div class="section" style="padding-bottom:20px">
+    <div class="section-label">お知らせ</div>
+    <div class="news-item">
+      <div class="news-dot"></div>
+      <div>
+        <div class="news-title">GW期間中の営業について</div>
+        <div class="news-date">2026.04.10</div>
+      </div>
+    </div>
+    <div class="news-item">
+      <div class="news-dot" style="background:#aaa"></div>
+      <div>
+        <div class="news-title">新メニュー「頭皮ケアスパ」開始のご案内</div>
+        <div class="news-date">2026.03.28</div>
+      </div>
+    </div>
+    <div class="news-item">
+      <div class="news-dot" style="background:#aaa"></div>
+      <div>
+        <div class="news-title">スタッフ紹介 — 新しいスタイリスト加入！</div>
+        <div class="news-date">2026.03.15</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-      ring.style.setProperty('--ring-offset', offset);
-      label.textContent = pct + '%';
-      title.textContent = checked + ' of ' + total + ' complete';
-    }
+<!-- ═══ MENU ═══ -->
+<div class="tab-content" id="content-menu">
+  <div class="menu-cat">カット</div>
+  <div class="menu-row">
+    <div class="menu-left"><div class="menu-name">カット</div><div class="menu-time">所要時間 60分〜</div></div>
+    <div class="menu-right"><div class="menu-price">¥5,500</div><div class="menu-tax">税込〜</div></div>
+  </div>
+  <div class="menu-row">
+    <div class="menu-left"><div class="menu-name">カット＋シャンプー</div><div class="menu-time">所要時間 75分〜</div></div>
+    <div class="menu-right"><div class="menu-price">¥6,600</div><div class="menu-tax">税込〜</div></div>
+  </div>
 
-    function resetAll() {
-      if (!confirm('Clear all checklist items?')) return;
+  <div class="menu-cat">カラー</div>
+  <div class="menu-row">
+    <div class="menu-left"><div class="menu-name">リタッチカラー</div><div class="menu-time">所要時間 90分〜</div></div>
+    <div class="menu-right"><div class="menu-price">¥7,700</div><div class="menu-tax">税込〜</div></div>
+  </div>
+  <div class="menu-row">
+    <div class="menu-left"><div class="menu-name">フルカラー</div><div class="menu-time">所要時間 120分〜</div></div>
+    <div class="menu-right"><div class="menu-price">¥9,900</div><div class="menu-tax">税込〜</div></div>
+  </div>
+  <div class="menu-row">
+    <div class="menu-left"><div class="menu-name">ハイライト</div><div class="menu-time">所要時間 150分〜</div></div>
+    <div class="menu-right"><div class="menu-price">¥14,300</div><div class="menu-tax">税込〜</div></div>
+  </div>
 
-      checklist.querySelectorAll('input[type="checkbox"]').forEach((box) => {
-        box.checked = false;
-      });
-      updateProgress();
-    }
+  <div class="menu-cat">トリートメント</div>
+  <div class="menu-row">
+    <div class="menu-left"><div class="menu-name">集中トリートメント</div><div class="menu-time">所要時間 30分〜</div></div>
+    <div class="menu-right"><div class="menu-price">¥3,300</div><div class="menu-tax">税込〜</div></div>
+  </div>
+  <div class="menu-row">
+    <div class="menu-left"><div class="menu-name">プレミアムトリートメント</div><div class="menu-time">所要時間 45分〜</div></div>
+    <div class="menu-right"><div class="menu-price">¥5,500</div><div class="menu-tax">税込〜</div></div>
+  </div>
 
-    checklist.addEventListener('change', updateProgress);
-    updateProgress();
-  </script>
+  <div class="menu-cat">パーマ・縮毛</div>
+  <div class="menu-row">
+    <div class="menu-left"><div class="menu-name">デジタルパーマ</div><div class="menu-time">所要時間 150分〜</div></div>
+    <div class="menu-right"><div class="menu-price">¥14,300</div><div class="menu-tax">税込〜</div></div>
+  </div>
+  <div class="menu-row">
+    <div class="menu-left"><div class="menu-name">縮毛矯正</div><div class="menu-time">所要時間 180分〜</div></div>
+    <div class="menu-right"><div class="menu-price">¥16,500</div><div class="menu-tax">税込〜</div></div>
+  </div>
+
+  <div class="menu-cat">ヘッドスパ</div>
+  <div class="menu-row" style="border-bottom:none">
+    <div class="menu-left"><div class="menu-name">頭皮ケアスパ</div><div class="menu-time">所要時間 45分〜</div></div>
+    <div class="menu-right"><div class="menu-price">¥4,400</div><div class="menu-tax">税込〜</div></div>
+  </div>
+
+  <div style="padding:16px;background:var(--rose-lt);margin:8px 16px 20px;border-radius:10px;font-size:12px;color:var(--rose);line-height:1.7;text-align:center">
+    LINEから24時間ご予約受付中<br>
+    <strong style="font-size:14px">友だち追加 → 「予約」と送信</strong>
+  </div>
+</div>
+
+<!-- ═══ COUPON ═══ -->
+<div class="tab-content" id="content-coupon">
+  <div style="padding:16px 16px 8px;font-size:12px;color:var(--muted)">友だち限定クーポンをご利用いただけます</div>
+
+  <div class="coupon-card">
+    <div class="coupon-top">
+      <div>
+        <div class="coupon-title">初回来店クーポン</div>
+        <div class="coupon-desc">全メニュー対象<br>はじめてのお客様限定</div>
+      </div>
+      <div class="coupon-val">20<span class="coupon-val-unit">%OFF</span></div>
+    </div>
+    <div class="coupon-bottom">
+      <div class="coupon-expire">有効期限：2026年6月30日</div>
+      <button class="coupon-btn" onclick="useCoupon(this)">つかう</button>
+    </div>
+  </div>
+
+  <div class="coupon-card2">
+    <div class="coupon-top2">
+      <div>
+        <div class="coupon-title">春の限定クーポン</div>
+        <div class="coupon-desc">カラー＋トリートメント<br>セットメニュー限定</div>
+      </div>
+      <div class="coupon-val">¥<span style="font-size:22px">2,000</span><span class="coupon-val-unit"><br>OFF</span></div>
+    </div>
+    <div class="coupon-bottom">
+      <div class="coupon-expire">有効期限：2026年4月30日</div>
+      <button class="coupon-btn" onclick="useCoupon(this)">つかう</button>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:20px 16px;font-size:12px;color:var(--muted);line-height:1.8">
+    クーポンは来店時にスタッフへご提示ください。<br>
+    他のクーポンとの併用はできません。
+  </div>
+</div>
+
+<!-- ═══ INFO ═══ -->
+<div class="tab-content" id="content-info">
+  <div style="height:8px;background:var(--bg)"></div>
+  <div class="info-section">
+    <div class="info-row"><div class="info-key">サロン名</div><div class="info-val">Haru Tokyo（ハル東京）</div></div>
+    <div class="info-row"><div class="info-key">住所</div><div class="info-val">東京都渋谷区神宮前X-XX-XX<br>〇〇ビル 2F</div></div>
+    <div class="info-row"><div class="info-key">最寄り駅</div><div class="info-val">表参道駅 A2出口より徒歩5分<br>原宿駅 竹下口より徒歩8分</div></div>
+    <div class="info-row"><div class="info-key">TEL</div><div class="info-val">03-XXXX-XXXX</div></div>
+    <div class="info-row"><div class="info-key">営業時間</div><div class="info-val">月・水〜土  10:00 〜 20:00<br>日・祝日    10:00 〜 18:00</div></div>
+    <div class="info-row"><div class="info-key">定休日</div><div class="info-val">火曜日</div></div>
+    <div class="info-row"><div class="info-key">予約</div><div class="info-val">LINEにて24時間受付<br>当日予約もお気軽にどうぞ</div></div>
+  </div>
+
+  <div class="map-placeholder">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><circle cx="12" cy="11" r="3"/></svg>
+    地図を表示（Google Maps）
+  </div>
+
+  <div style="margin:0 16px 20px;background:var(--rose-lt);border-radius:10px;padding:16px;text-align:center">
+    <div style="font-size:13px;font-weight:700;color:var(--rose);margin-bottom:8px">LINEでご予約・お問い合わせ</div>
+    <button class="btn-add" style="max-width:280px;margin:0 auto" onclick="addFriend()">
+      <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M12 2C6.48 2 2 6.04 2 11c0 3.19 1.73 6.01 4.36 7.77L5.5 22l3.5-1.5c.93.26 1.92.4 2.95.4 5.52 0 10-4.04 10-9S17.52 2 12 2z"/></svg>
+      友だち追加する
+    </button>
+  </div>
+</div>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('content-'+name).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function addFriend() {
+  window.location.href = 'https://line.me/R/ti/p/%40867vrmdw';
+}
+
+function useCoupon(btn) {
+  btn.textContent = '使用済み';
+  btn.style.background = '#aaa';
+  btn.disabled = true;
+  alert('クーポンを使用しました。\nスタッフにこの画面をご提示ください。');
+}
+</script>
 </body>
 </html>
-

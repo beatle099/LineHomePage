@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ご予約 | Haru Tokyo</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#06C755;
+  --green-dk:#05a847;
+  --rose:#c8846a;
+  --rose-lt:#fdf3ef;
+  --rose-dk:#a0604a;
+  --bg:#f5f5f5;
+  --white:#fff;
+  --text:#111;
+  --muted:#666;
+  --border:#e5e5e5;
+  --danger:#dc2626;
+  --danger-lt:#fef2f2;
+  --font:'Noto Sans JP',sans-serif;
+  --radius:12px;
+  --shadow:0 2px 12px rgba(0,0,0,.07);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:390px;margin:0 auto;min-height:100vh;-webkit-font-smoothing:antialiased;padding-bottom:40px}
+
+/* topbar */
+.topbar{background:var(--white);display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.topbar-back{color:var(--green);cursor:pointer;display:flex;align-items:center;gap:4px;font-size:14px;font-weight:500;text-decoration:none}
+.topbar-back svg{width:18px;height:18px}
+.topbar-title{font-size:15px;font-weight:700}
+
+/* steps indicator */
+.steps{display:flex;align-items:center;padding:16px 20px;background:var(--white);border-bottom:1px solid var(--border)}
+.step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;top:14px;left:60%;right:-40%;height:2px;background:var(--border);z-index:0}
+.step.done:not(:last-child)::after{background:var(--green)}
+.step-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);z-index:1;transition:all .25s}
+.step.active .step-dot{border-color:var(--green);background:var(--green);color:var(--white)}
+.step.done .step-dot{border-color:var(--green);background:var(--green);color:var(--white)}
+.step-label{font-size:10px;color:var(--muted);font-weight:500}
+.step.active .step-label,.step.done .step-label{color:var(--green)}
+
+/* screen */
+.screen{display:none;padding:16px}
+.screen.active{display:block}
+
+/* section title */
+.sec-title{font-size:16px;font-weight:700;margin-bottom:4px;letter-spacing:-.2px}
+.sec-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+
+/* menu select */
+.menu-card{background:var(--white);border:2px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:14px}
+.menu-card:active{transform:scale(.98)}
+.menu-card.selected{border-color:var(--green);background:#f0faf4}
+.menu-icon{width:42px;height:42px;border-radius:50%;background:var(--rose-lt);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.menu-icon svg{width:20px;height:20px;stroke:var(--rose);fill:none;stroke-width:1.8;stroke-linecap:round}
+.menu-info{flex:1}
+.menu-name{font-size:14px;font-weight:700;margin-bottom:2px}
+.menu-meta{font-size:11px;color:var(--muted)}
+.menu-price{font-size:14px;font-weight:700;color:var(--rose-dk);flex-shrink:0}
+.check-circle{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.menu-card.selected .check-circle{border-color:var(--green);background:var(--green)}
+.check-circle svg{width:12px;height:12px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;display:none}
+.menu-card.selected .check-circle svg{display:block}
+
+/* calendar */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-month{font-size:15px;font-weight:700}
+.cal-nav{width:32px;height:32px;border:1px solid var(--border);border-radius:8px;background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cal-nav svg{width:16px;height:16px;stroke:var(--text);fill:none;stroke-width:2;stroke-linecap:round}
+.cal-nav:disabled{opacity:.35;cursor:not-allowed}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
+.cal-day-label{text-align:center;font-size:11px;font-weight:500;color:var(--muted);padding:4px 0}
+.cal-day-label:first-child{color:#ef4444}
+.cal-day-label:last-child{color:#3b82f6}
+.cal-cell{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;position:relative}
+.cal-cell:hover:not(.empty):not(.past):not(.closed){background:var(--rose-lt)}
+.cal-cell.today{font-weight:700;color:var(--rose)}
+.cal-cell.selected{background:var(--green) !important;color:white !important;border-radius:50%}
+.cal-cell.past{color:#ccc;cursor:not-allowed}
+.cal-cell.closed{color:#ccc;cursor:not-allowed;text-decoration:line-through}
+.cal-cell.empty{cursor:default}
+.cal-cell.sun{color:#ef4444}
+.cal-cell.sat{color:#3b82f6}
+.cal-cell.has-slots::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--green)}
+.cal-cell.selected::after{background:white}
+
+/* time slots */
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.time-slot{border:1.5px solid var(--border);border-radius:8px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s;background:var(--white)}
+.time-slot:hover:not(.full){border-color:var(--green);background:#f0faf4}
+.time-slot.selected{border-color:var(--green);background:var(--green);color:white}
+.time-slot.full{background:#f5f5f5;color:#bbb;cursor:not-allowed;border-color:#eee}
+.time-val{font-size:14px;font-weight:700;display:block}
+.time-tag{font-size:10px;margin-top:2px;display:block}
+.time-slot.full .time-tag{color:#ccc}
+.time-slot.selected .time-tag{color:rgba(255,255,255,.8)}
+
+/* form */
+.form-group{margin-bottom:14px}
+.form-label{font-size:12px;font-weight:500;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.req{color:var(--danger);font-size:11px}
+.form-input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font);font-size:14px;color:var(--text);background:var(--white);transition:border .15s;outline:none}
+.form-input:focus{border-color:var(--green)}
+.form-input.error{border-color:var(--danger);background:var(--danger-lt)}
+.err-msg{font-size:11px;color:var(--danger);margin-top:4px;display:none}
+.err-msg.show{display:block}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23666'%3E%3Cpath d='M5 7l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:16px;padding-right:36px}
+
+/* summary box */
+.summary-box{background:var(--rose-lt);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px}
+.summary-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid rgba(200,132,106,.2)}
+.summary-row:last-child{border-bottom:none;font-weight:700;font-size:14px;padding-top:8px}
+.summary-key{color:var(--muted)}
+.summary-val{color:var(--text);text-align:right;max-width:65%}
+
+/* buttons */
+.btn-primary{width:100%;padding:14px;background:var(--green);color:white;border:none;border-radius:var(--radius);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;letter-spacing:.3px}
+.btn-primary:active{background:var(--green-dk)}
+.btn-primary:disabled{background:#aaa;cursor:not-allowed}
+.btn-secondary{width:100%;padding:13px;background:var(--white);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius);font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;margin-top:8px}
+
+/* phone fallback */
+.phone-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:16px;text-align:center}
+.phone-label{font-size:11px;color:var(--muted);margin-bottom:8px;letter-spacing:.5px}
+.phone-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#1d4ed8;color:white;border:none;border-radius:var(--radius);font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-decoration:none}
+.phone-btn svg{width:20px;height:20px;flex-shrink:0}
+.phone-note{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.7}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* confirm screen */
+.confirm-icon{width:64px;height:64px;border-radius:50%;background:#e6f4ed;display:flex;align-items:center;justify-content:center;margin:16px auto 12px}
+.confirm-icon svg{width:32px;height:32px;stroke:#0a7c42;fill:none;stroke-width:2;stroke-linecap:round}
+
+/* bot bubble */
+.bot-row{display:flex;gap:10px;margin-bottom:12px;align-items:flex-end}
+.bot-avatar{width:32px;height:32px;border-radius:50%;background:var(--rose-lt);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;color:var(--rose-dk);font-weight:700}
+.bubble{background:var(--white);border-radius:12px 12px 12px 2px;padding:10px 13px;font-size:13px;color:var(--text);line-height:1.6;max-width:80%;box-shadow:var(--shadow)}
+.user-bubble{background:var(--green);color:white;border-radius:12px 12px 2px 12px;padding:10px 13px;font-size:13px;line-height:1.6;max-width:80%;margin-left:auto;box-shadow:var(--shadow)}
+.typing{display:flex;gap:4px;padding:12px 14px}
+.typing span{width:6px;height:6px;border-radius:50%;background:#ccc;animation:bounce .9s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <a class="topbar-back" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    戻る
+  </a>
+  <div class="topbar-title">ご予約</div>
+</div>
+
+<!-- Step indicator -->
+<div class="steps" id="steps">
+  <div class="step active" id="step1"><div class="step-dot">1</div><div class="step-label">メニュー</div></div>
+  <div class="step" id="step2"><div class="step-dot">2</div><div class="step-label">日時</div></div>
+  <div class="step" id="step3"><div class="step-dot">3</div><div class="step-label">お客様情報</div></div>
+  <div class="step" id="step4"><div class="step-dot"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="2,7 5.5,11 12,3"/></svg></div><div class="step-label">完了</div></div>
+</div>
+
+<!-- ═══ SCREEN 1: Menu ═══ -->
+<div class="screen active" id="screen1">
+
+  <!-- Bot greeting -->
+  <div style="padding:16px 16px 8px">
+    <div class="bot-row">
+      <div class="bot-avatar">H</div>
+      <div class="bubble">こんにちは！Haru Tokyoの予約アシスタントです。<br>ご希望のメニューをお選びください。</div>
+    </div>
+  </div>
+
+  <div style="padding:0 16px">
+    <div class="sec-title">メニューを選ぶ</div>
+    <div class="sec-sub">ご希望のメニューを1つお選びください</div>
+
+    <div class="menu-card" onclick="selectMenu(this,'カット','60分〜','¥5,500〜')">
+      <div class="menu-icon"><svg viewBox="0 0 24 24"><path d="M6 3l12 18M6 21l12-18M9 12h6"/></svg></div>
+      <div class="menu-info"><div class="menu-name">カット</div><div class="menu-meta">所要時間 60分〜</div></div>
+      <div class="menu-price">¥5,500〜</div>
+      <div class="check-circle"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+    </div>
+
+    <div class="menu-card" onclick="selectMenu(this,'カラー','90分〜','¥7,700〜')">
+      <div class="menu-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M8 12 Q12 6 16 12 Q12 18 8 12Z"/></svg></div>
+      <div class="menu-info"><div class="menu-name">カラー</div><div class="menu-meta">所要時間 90分〜</div></div>
+      <div class="menu-price">¥7,700〜</div>
+      <div class="check-circle"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+    </div>
+
+    <div class="menu-card" onclick="selectMenu(this,'カット＋カラー','150分〜','¥12,100〜')">
+      <div class="menu-icon"><svg viewBox="0 0 24 24"><path d="M6 3l12 18M6 21l12-18M9 12h6"/><circle cx="18" cy="6" r="3"/></svg></div>
+      <div class="menu-info"><div class="menu-name">カット＋カラー <span style="font-size:10px;background:#fdf3ef;color:#c8846a;padding:2px 6px;border-radius:4px;margin-left:4px">人気</span></div><div class="menu-meta">所要時間 150分〜</div></div>
+      <div class="menu-price">¥12,100〜</div>
+      <div class="check-circle"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+    </div>
+
+    <div class="menu-card" onclick="selectMenu(this,'トリートメント','45分〜','¥3,300〜')">
+      <div class="menu-icon"><svg viewBox="0 0 24 24"><path d="M7 6C7 6 12 3 17 6C17 14 12 18 12 18C12 18 7 14 7 6Z"/></svg></div>
+      <div class="menu-info"><div class="menu-name">トリートメント</div><div class="menu-meta">所要時間 45分〜</div></div>
+      <div class="menu-price">¥3,300〜</div>
+      <div class="check-circle"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+    </div>
+
+    <div class="menu-card" onclick="selectMenu(this,'ヘッドスパ','45分〜','¥4,400〜')">
+      <div class="menu-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M7 15 Q12 13 17 15"/></svg></div>
+      <div class="menu-info"><div class="menu-name">ヘッドスパ</div><div class="menu-meta">所要時間 45分〜</div></div>
+      <div class="menu-price">¥4,400〜</div>
+      <div class="check-circle"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+    </div>
+
+    <button class="btn-primary" id="btn-next1" disabled onclick="goToStep(2)">次へ — 日時を選ぶ</button>
+
+    <div class="divider">または</div>
+    <div class="phone-card">
+      <div class="phone-label">お電話でのご予約</div>
+      <a class="phone-btn" href="tel:0312345678">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.6 11.6a19.79 19.79 0 01-3.07-8.67A2 2 0 012.51 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.52a16 16 0 006.29 6.29l.89-.89a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        03-1234-5678
+      </a>
+      <div class="phone-note">営業時間内（月〜土 10:00〜19:00）<br>火曜日定休</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN 2: Date & Time ═══ -->
+<div class="screen" id="screen2">
+  <div style="padding:16px">
+
+    <div class="bot-row">
+      <div class="bot-avatar">H</div>
+      <div class="bubble" id="menu-confirm-bubble">ご希望の日時をお選びください。</div>
+    </div>
+
+    <div class="sec-title">日付を選ぶ</div>
+    <div class="sec-sub" id="cal-sub">予約可能な日程（●）をお選びください</div>
+
+    <div class="cal-header">
+      <button class="cal-nav" id="cal-prev" onclick="changeMonth(-1)">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="cal-month" id="cal-month-label"></div>
+      <button class="cal-nav" onclick="changeMonth(1)">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+
+    <div class="cal-grid">
+      <div class="cal-day-label">日</div>
+      <div class="cal-day-label">月</div>
+      <div class="cal-day-label">火</div>
+      <div class="cal-day-label">水</div>
+      <div class="cal-day-label">木</div>
+      <div class="cal-day-label">金</div>
+      <div class="cal-day-label">土</div>
+    </div>
+    <div class="cal-grid" id="cal-cells"></div>
+
+    <div id="time-section" style="display:none">
+      <div class="sec-title" style="margin-top:8px">時間を選ぶ</div>
+      <div class="sec-sub" id="time-sub">選択した日の空き状況</div>
+      <div class="time-grid" id="time-grid"></div>
+    </div>
+
+    <button class="btn-primary" id="btn-next2" disabled onclick="goToStep(3)">次へ — お客様情報を入力</button>
+    <button class="btn-secondary" onclick="goToStep(1)">戻る</button>
+
+    <div class="divider">予約が難しい場合</div>
+    <div class="phone-card">
+      <div class="phone-label">お電話でのご確認</div>
+      <a class="phone-btn" href="tel:0312345678">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.6 11.6a19.79 19.79 0 01-3.07-8.67A2 2 0 012.51 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.52a16 16 0 006.29 6.29l.89-.89a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        03-1234-5678
+      </a>
+      <div class="phone-note">ご希望の日時が見つからない場合は<br>お気軽にお電話ください</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN 3: Customer Info ═══ -->
+<div class="screen" id="screen3">
+  <div style="padding:16px">
+
+    <div class="bot-row">
+      <div class="bot-avatar">H</div>
+      <div class="bubble">お客様情報をご入力ください。<br>ご来店前にご確認のご連絡をいたします。</div>
+    </div>
+
+    <div class="sec-title">お客様情報</div>
+    <div class="sec-sub">予約確認のために必要な情報です</div>
+
+    <div class="form-group">
+      <div class="form-label">お名前 <span class="req">必須</span></div>
+      <input class="form-input" id="inp-name" type="text" placeholder="山田 花子" oninput="validateField('name')">
+      <div class="err-msg" id="err-name">お名前を入力してください</div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-label">お電話番号 <span class="req">必須</span></div>
+      <input class="form-input" id="inp-phone" type="tel" placeholder="090-0000-0000" oninput="validateField('phone')">
+      <div class="err-msg" id="err-phone">正しい電話番号を入力してください</div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-label">メールアドレス <span style="font-size:10px;color:var(--muted)">任意</span></div>
+      <input class="form-input" id="inp-email" type="email" placeholder="hanako@example.com">
+    </div>
+
+    <div class="form-group">
+      <div class="form-label">初回 / リピート</div>
+      <select class="form-input form-select" id="inp-visit">
+        <option value="">選択してください</option>
+        <option value="first">はじめてのご来店</option>
+        <option value="repeat">リピーター</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <div class="form-label">ご要望・アレルギー等 <span style="font-size:10px;color:var(--muted)">任意</span></div>
+      <textarea class="form-input" id="inp-note" rows="3" placeholder="ご要望があればご記入ください（薬剤アレルギー、スタイルのご希望など）" style="resize:none;line-height:1.6"></textarea>
+    </div>
+
+    <button class="btn-primary" id="btn-next3" onclick="goToStep(4)">予約内容を確認する</button>
+    <button class="btn-secondary" onclick="goToStep(2)">戻る</button>
+
+    <!-- Failsafe phone -->
+    <div class="phone-card" style="margin-top:16px">
+      <div class="phone-label">入力が難しい場合はお電話で</div>
+      <a class="phone-btn" href="tel:0312345678">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.6 11.6a19.79 19.79 0 01-3.07-8.67A2 2 0 012.51 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.52a16 16 0 006.29 6.29l.89-.89a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        03-1234-5678
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN 4: Confirm ═══ -->
+<div class="screen" id="screen4">
+  <div style="padding:16px">
+    <div class="confirm-icon">
+      <svg viewBox="0 0 32 32"><polyline points="4,16 12,24 28,8"/></svg>
+    </div>
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:18px;font-weight:700;margin-bottom:4px">ご予約ありがとうございます</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.7">確認のSMSをお送りしました。<br>ご来店をお待ちしております。</div>
+    </div>
+
+    <div class="summary-box">
+      <div class="summary-row"><span class="summary-key">サロン名</span><span class="summary-val">Haru Tokyo</span></div>
+      <div class="summary-row"><span class="summary-key">メニュー</span><span class="summary-val" id="conf-menu">—</span></div>
+      <div class="summary-row"><span class="summary-key">日時</span><span class="summary-val" id="conf-datetime">—</span></div>
+      <div class="summary-row"><span class="summary-key">お名前</span><span class="summary-val" id="conf-name">—</span></div>
+      <div class="summary-row"><span class="summary-key">お電話番号</span><span class="summary-val" id="conf-phone">—</span></div>
+      <div class="summary-row"><span class="summary-key">料金（目安）</span><span class="summary-val" id="conf-price">—</span></div>
+    </div>
+
+    <div style="background:#fff;border-radius:var(--radius);padding:14px 16px;border:1px solid var(--border);margin-bottom:16px;font-size:12px;color:var(--muted);line-height:1.8">
+      前日17時までにキャンセルのご連絡をお願いします。<br>
+      当日キャンセルはキャンセル料が発生する場合があります。
+    </div>
+
+    <div class="phone-card">
+      <div class="phone-label">ご変更・キャンセルのお電話</div>
+      <a class="phone-btn" href="tel:0312345678">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.6 11.6a19.79 19.79 0 01-3.07-8.67A2 2 0 012.51 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.52a16 16 0 006.29 6.29l.89-.89a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        03-1234-5678
+      </a>
+      <div class="phone-note">営業時間内（月〜土 10:00〜19:00）にご連絡ください</div>
+    </div>
+
+    <a href="index.html" class="btn-secondary" style="display:block;text-align:center;text-decoration:none;margin-top:8px;padding:13px;background:var(--white);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:500">ホームへ戻る</a>
+  </div>
+</div>
+
+<script>
+// ── State ──
+const booking = { menu:'', duration:'', price:'', date:null, time:'', name:'', phone:'' };
+let calYear, calMonth;
+
+// ── Init ──
+const now = new Date();
+calYear = now.getFullYear();
+calMonth = now.getMonth();
+renderCalendar();
+
+// ── Menu selection ──
+function selectMenu(el, name, duration, price) {
+  document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  booking.menu = name; booking.duration = duration; booking.price = price;
+  document.getElementById('btn-next1').disabled = false;
+}
+
+// ── Calendar ──
+const MONTHS_JP = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+
+// Mock availability — Tues closed, others have slots
+function hasSlots(d) {
+  if (d.getDay() === 2) return false; // Tuesday closed
+  return true;
+}
+function isPast(d) {
+  const t = new Date(); t.setHours(0,0,0,0);
+  return d < t;
+}
+
+function renderCalendar() {
+  document.getElementById('cal-month-label').textContent = `${calYear}年 ${MONTHS_JP[calMonth]}`;
+  const prevBtn = document.getElementById('cal-prev');
+  prevBtn.disabled = (calYear === now.getFullYear() && calMonth <= now.getMonth());
+
+  const cells = document.getElementById('cal-cells');
+  cells.innerHTML = '';
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const days = new Date(calYear, calMonth+1, 0).getDate();
+
+  for (let i = 0; i < first; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-cell empty';
+    cells.appendChild(el);
+  }
+  for (let d = 1; d <= days; d++) {
+    const date = new Date(calYear, calMonth, d);
+    const el = document.createElement('div');
+    const past = isPast(date);
+    const closed = date.getDay() === 2;
+    const isToday = date.toDateString() === now.toDateString();
+    const isSun = date.getDay() === 0;
+    const isSat = date.getDay() === 6;
+    let cls = 'cal-cell';
+    if (past) cls += ' past';
+    else if (closed) cls += ' closed';
+    else { cls += ' has-slots'; if(isSun) cls += ' sun'; if(isSat) cls += ' sat'; }
+    if (isToday && !past) cls += ' today';
+    if (booking.date && booking.date.toDateString() === date.toDateString()) cls += ' selected';
+    el.className = cls;
+    el.textContent = d;
+    if (!past && !closed) el.onclick = () => selectDate(date, el);
+    cells.appendChild(el);
+  }
+}
+
+function selectDate(date, el) {
+  booking.date = date;
+  booking.time = '';
+  document.querySelectorAll('.cal-cell').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  showTimeSlots(date);
+  document.getElementById('btn-next2').disabled = true;
+}
+
+function showTimeSlots(date) {
+  const section = document.getElementById('time-section');
+  const grid = document.getElementById('time-grid');
+  const sub = document.getElementById('time-sub');
+  section.style.display = 'block';
+  const dayStr = ['日','月','火','水','木','金','土'][date.getDay()];
+  sub.textContent = `${date.getMonth()+1}月${date.getDate()}日（${dayStr}）の空き状況`;
+  grid.innerHTML = '';
+
+  // Realistic time slots with some marked full
+  const slots = [
+    {t:'10:00', full:false},
+    {t:'11:00', full:true},
+    {t:'12:00', full:false},
+    {t:'13:00', full:true},
+    {t:'14:00', full:false},
+    {t:'15:00', full:false},
+    {t:'16:00', full:true},
+    {t:'17:00', full:false},
+    {t:'18:00', full:false},
+  ];
+  // Vary by day slightly
+  if (date.getDay() === 0 || date.getDay() === 6) {
+    slots[0].full = true; slots[2].full = true; slots[4].full = true;
+  }
+
+  slots.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'time-slot' + (s.full ? ' full' : '');
+    el.innerHTML = `<span class="time-val">${s.t}</span><span class="time-tag">${s.full ? '満席' : '空きあり'}</span>`;
+    if (!s.full) el.onclick = () => selectTime(s.t, el);
+    grid.appendChild(el);
+  });
+}
+
+function selectTime(t, el) {
+  document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  booking.time = t;
+  document.getElementById('btn-next2').disabled = false;
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+}
+
+// ── Validation ──
+function validateField(field) {
+  if (field === 'name') {
+    const v = document.getElementById('inp-name').value.trim();
+    setError('name', v.length < 1);
+    booking.name = v;
+  }
+  if (field === 'phone') {
+    const v = document.getElementById('inp-phone').value.trim().replace(/[^\d]/g,'');
+    setError('phone', v.length < 10 || v.length > 11);
+    booking.phone = document.getElementById('inp-phone').value.trim();
+  }
+}
+function setError(field, hasErr) {
+  document.getElementById('inp-'+field).classList.toggle('error', hasErr);
+  document.getElementById('err-'+field).classList.toggle('show', hasErr);
+}
+
+// ── Navigation ──
+function goToStep(n) {
+  // Validate step 3 before proceeding to 4
+  if (n === 4) {
+    const name = document.getElementById('inp-name').value.trim();
+    const phone = document.getElementById('inp-phone').value.trim().replace(/[^\d]/g,'');
+    let ok = true;
+    if (name.length < 1) { setError('name', true); ok = false; }
+    if (phone.length < 10) { setError('phone', true); ok = false; }
+    if (!ok) return;
+    // Fill confirm screen
+    const d = booking.date;
+    const dayStr = ['日','月','火','水','木','金','土'][d.getDay()];
+    document.getElementById('conf-menu').textContent = booking.menu;
+    document.getElementById('conf-datetime').textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${dayStr}） ${booking.time}`;
+    document.getElementById('conf-name').textContent = name;
+    document.getElementById('conf-phone').textContent = document.getElementById('inp-phone').value.trim();
+    document.getElementById('conf-price').textContent = booking.price;
+  }
+  // Update menu confirm bubble
+  if (n === 2) {
+    document.getElementById('menu-confirm-bubble').textContent = `「${booking.menu}」を選択しました。ご希望の日時をお選びください。`;
+  }
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen'+n).classList.add('active');
+  // Update step indicators
+  for (let i = 1; i <= 4; i++) {
+    const s = document.getElementById('step'+i);
+    s.classList.remove('active','done');
+    if (i < n) s.classList.add('done');
+    if (i === n) s.classList.add('active');
+    if (i <= n && i < 4) {
+      const dot = s.querySelector('.step-dot');
+      if (i < n) dot.innerHTML = '<svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="2,7 5.5,11 12,3"/></svg>';
+      else dot.textContent = i;
+    }
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
