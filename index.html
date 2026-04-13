@@ -4,8 +4,246 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mishona PDM Checklist</title>
+  <style>
+    :root {
+      --ring-size: 120px;
+      --ring-stroke: 8px;
+      --ring-radius: 52;
+      --ring-circumference: 326.73;
+      --ring-progress: 0;
+      --ring-offset: var(--ring-circumference);
+      --ring-bg: #e5e7eb;
+      --ring-fill: #22c55e;
+      --ring-text: #111827;
+      --body-bg: #f9fafb;
+      --card-bg: #ffffff;
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      --check-accent: #22c55e;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--body-bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    /* Summary card with progress ring */
+    .summary {
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-ring {
+      width: var(--ring-size);
+      height: var(--ring-size);
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .progress-ring svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring__bg {
+      fill: none;
+      stroke: var(--ring-bg);
+      stroke-width: var(--ring-stroke);
+    }
+
+    .progress-ring__fill {
+      fill: none;
+      stroke: var(--ring-fill);
+      stroke-width: var(--ring-stroke);
+      stroke-linecap: round;
+      stroke-dasharray: var(--ring-circumference);
+      stroke-dashoffset: var(--ring-offset);
+      transition: stroke-dashoffset 0.4s ease;
+    }
+
+    .progress-ring__label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--ring-text);
+    }
+
+    .summary-text h2 {
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .summary-text p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    /* Checklist */
+    .checklist {
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      padding: 0.5rem 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid #f3f4f6;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li:hover { background: #f9fafb; }
+
+    .checklist input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--check-accent);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .checklist label {
+      cursor: pointer;
+      flex: 1;
+      transition: color 0.2s, text-decoration 0.2s;
+    }
+
+    .checklist input:checked + label {
+      text-decoration: line-through;
+      color: var(--text-secondary);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .reset-button {
+      border: 0;
+      border-radius: 8px;
+      background: var(--ring-fill);
+      color: #ffffff;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+      padding: 0.625rem 1rem;
+    }
+  </style>
 </head>
 <body>
-  <h1>Mishona PDM Checklist</h1>
+  <div class="app">
+    <h1>Mishona PDM Checklist</h1>
+
+    <div class="summary">
+      <div class="progress-ring" id="progressRing">
+        <svg viewBox="0 0 120 120">
+          <circle class="progress-ring__bg" cx="60" cy="60" r="52" />
+          <circle class="progress-ring__fill" cx="60" cy="60" r="52" />
+        </svg>
+        <div class="progress-ring__label" id="progressLabel">0%</div>
+      </div>
+      <div class="summary-text">
+        <h2 id="summaryTitle">0 of 5 complete</h2>
+        <p>Check items off to track progress</p>
+      </div>
+    </div>
+
+    <ul class="checklist" id="checklist">
+      <li>
+        <input type="checkbox" id="item1">
+        <label for="item1">Define project requirements</label>
+      </li>
+      <li>
+        <input type="checkbox" id="item2">
+        <label for="item2">Create wireframes</label>
+      </li>
+      <li>
+        <input type="checkbox" id="item3">
+        <label for="item3">Build prototype</label>
+      </li>
+      <li>
+        <input type="checkbox" id="item4">
+        <label for="item4">User testing</label>
+      </li>
+      <li>
+        <input type="checkbox" id="item5">
+        <label for="item5">Final review &amp; launch</label>
+      </li>
+    </ul>
+
+    <div class="actions">
+      <button class="reset-button" type="button" onclick="resetAll()">Reset all</button>
+    </div>
+  </div>
+
+  <script>
+    const checklist = document.getElementById('checklist');
+    const ring = document.getElementById('progressRing');
+    const label = document.getElementById('progressLabel');
+    const title = document.getElementById('summaryTitle');
+    const CIRCUMFERENCE = 2 * Math.PI * 52; // matches r="52"
+
+    function updateProgress() {
+      const boxes = checklist.querySelectorAll('input[type="checkbox"]');
+      const checked = checklist.querySelectorAll('input[type="checkbox"]:checked').length;
+      const total = boxes.length;
+      const pct = total === 0 ? 0 : Math.round((checked / total) * 100);
+      const offset = CIRCUMFERENCE - (CIRCUMFERENCE * pct / 100);
+
+      ring.style.setProperty('--ring-offset', offset);
+      label.textContent = pct + '%';
+      title.textContent = checked + ' of ' + total + ' complete';
+    }
+
+    function resetAll() {
+      if (!confirm('Clear all checklist items?')) return;
+
+      checklist.querySelectorAll('input[type="checkbox"]').forEach((box) => {
+        box.checked = false;
+      });
+      updateProgress();
+    }
+
+    checklist.addEventListener('change', updateProgress);
+    updateProgress();
+  </script>
 </body>
 </html>
