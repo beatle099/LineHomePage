@@ -37,8 +37,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:43
 /* ── Messages ── */
 .msg-row{display:flex;align-items:flex-end;gap:8px;margin-bottom:10px}
 .msg-row.user{flex-direction:row-reverse}
-.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4a3728,#2a1a0e);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4a3728,#2a1a0e);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .av svg{width:22px;height:22px;stroke:rgba(255,255,255,.7);fill:none;stroke-width:1.5;stroke-linecap:round}
+.av img{width:36px;height:36px;object-fit:cover;border-radius:50%}
 .msg-col{display:flex;flex-direction:column;max-width:78%}
 .msg-row.user .msg-col{align-items:flex-end}
 .bubble{background:var(--white);border-radius:4px 16px 16px 16px;padding:10px 13px;font-size:13px;line-height:1.75;box-shadow:var(--shadow)}
@@ -192,9 +193,12 @@ input[type=range]{flex:1;accent-color:var(--green)}
     <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
     戻る
   </a>
-  <div class="hdr-center">
-    <div class="hdr-name">Haru Tokyo</div>
-    <div class="hdr-sub">ヘアサロン · 表参道</div>
+  <div class="hdr-center" style="display:flex;align-items:center;justify-content:center;gap:8px">
+    <img src="images/line_icon.png" width="28" height="28" style="border-radius:50%;object-fit:cover" onerror="this.style.display='none'">
+    <div>
+      <div class="hdr-name">Haru Tokyo</div>
+      <div class="hdr-sub">ヘアサロン · 表参道</div>
+    </div>
   </div>
   <div class="hdr-icons">
     <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.6 11.6a19.79 19.79 0 01-3.07-8.67A2 2 0 012.51 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.52a16 16 0 006.29 6.29l.89-.89a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
@@ -254,6 +258,29 @@ input[type=range]{flex:1;accent-color:var(--green)}
 </div>
 
 <script>
+const IMAGE_MAP = {
+  'koshigaya': 'images/stylist_koshigaya.png',
+  'okuyama': 'images/stylist_okuyama.png',
+  'sato': 'images/stylist_sato.png',
+  'manabe': 'images/stylist_manabe.png',
+  'any_stylist': 'images/stylist_all.png',
+  'cut_large': 'images/menu_cut.png',
+  'color_large': 'images/menu_color.png',
+  'perm': 'images/menu_perm.png',
+  'treatment': 'images/menu_treatment.png',
+  'stylist': 'images/menu_consult.png',
+  'coupon': 'images/coupon_bg.png',
+  'spa': 'images/coupon_bg.png',
+  'gift_unlock': 'images/gift_bg.png',
+  'welcome': 'images/gift_bg.png',
+  'salon_intro': 'images/gift_bg.png',
+  'salon_interior': 'images/salon_interior.png',
+  'products': 'images/products_shelf.png',
+  'booking': 'images/booking_hero.png',
+  'point': 'images/rm_point.png',
+  'access': 'images/rm_access.png',
+};
+
 const CARD_ARTS = {
   'koshigaya': `<svg viewBox="0 0 190 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="190" height="120"><rect width="190" height="120" fill="#f0e8e0"/><rect x="0" y="70" width="190" height="50" fill="#e0d0c4"/><rect x="120" y="55" width="50" height="65" rx="8" fill="#c8b0a0"/><rect x="125" y="48" width="40" height="20" rx="10" fill="#d4bdb0"/><rect x="20" y="30" width="50" height="90" rx="4" fill="#3a2a1e"/><rect x="22" y="50" width="46" height="70" rx="3" fill="#f5f0ec"/><rect x="33" y="50" width="24" height="70" fill="#f5f0ec"/><path d="M33 50 L45 62 L57 50" stroke="#c8b0a0" stroke-width="1.5" fill="none"/><circle cx="45" cy="38" r="14" fill="#c8a888"/><ellipse cx="45" cy="26" rx="16" ry="5" fill="#1a1210"/><rect x="30" y="20" width="30" height="10" rx="2" fill="#1a1210"/><line x1="62" y1="72" x2="76" y2="86" stroke="#8a7060" stroke-width="2.5" stroke-linecap="round"/><line x1="62" y1="86" x2="76" y2="72" stroke="#8a7060" stroke-width="2.5" stroke-linecap="round"/><circle cx="69" cy="79" r="2.5" fill="#c8a888"/><rect x="135" y="10" width="45" height="50" rx="3" fill="#e8e0d8" stroke="#c8b0a0" stroke-width="1"/><rect x="138" y="13" width="39" height="44" rx="2" fill="#d8ece8" opacity="0.6"/><circle cx="170" cy="75" r="8" fill="#6a9860" opacity="0.7"/><circle cx="178" cy="70" r="6" fill="#4a8040" opacity="0.6"/><rect x="167" y="80" width="6" height="12" rx="2" fill="#8a6040"/><line x1="0" y1="95" x2="190" y2="95" stroke="#c8b0a0" stroke-width="1" opacity="0.4"/><text x="45" y="115" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#7a5840" opacity="0.8">Koshigaya</text></svg>`,
   'okuyama': `<svg viewBox="0 0 190 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="190" height="120"><rect width="190" height="120" fill="#f5ede8"/><rect x="0" y="75" width="190" height="45" fill="#ead8d0"/><circle cx="160" cy="20" r="40" fill="#f0d8d0" opacity="0.5"/><circle cx="30" cy="100" r="30" fill="#e8c8c0" opacity="0.4"/><rect x="110" y="60" width="60" height="60" rx="10" fill="#d4c0b8"/><rect x="115" y="52" width="50" height="18" rx="9" fill="#e0cec8"/><rect x="18" y="35" width="55" height="85" rx="4" fill="#f8f0ec"/><path d="M30 36 Q18 48 16 68 Q14 80 20 88" stroke="#3a2010" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M60 36 Q72 48 74 68 Q76 80 70 90" stroke="#3a2010" stroke-width="8" fill="none" stroke-linecap="round"/><circle cx="45" cy="30" r="14" fill="#d4a888"/><path d="M31 24 Q45 14 59 24 Q56 18 45 16 Q34 18 31 24 Z" fill="#3a2010"/><path d="M57 28 Q70 30 68 40 Q66 48 60 44" stroke="#3a2010" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="20" y="48" width="50" height="72" rx="3" fill="#f5f0f0"/><path d="M35 48 L45 58 L55 48" stroke="#e0d0c8" stroke-width="1.5" fill="none"/><rect x="58" y="68" width="8" height="20" rx="4" fill="#c8b4e8"/><rect x="60" y="64" width="4" height="6" rx="2" fill="#b0a0d0"/><rect x="130" y="20" width="50" height="6" rx="1" fill="#c8b0a8"/><rect x="133" y="10" width="8" height="12" rx="3" fill="#b4d0c4"/><rect x="144" y="8" width="10" height="14" rx="3" fill="#c8e0b8"/><rect x="157" y="12" width="7" height="10" rx="3" fill="#f0d8c8"/><text x="45" y="115" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="#9a5840" opacity="0.8">Okuyama</text></svg>`,
@@ -439,7 +466,14 @@ function scroll(){ setTimeout(()=>area.scrollTo({top:area.scrollHeight,behavior:
 
 function av(){
   const d=document.createElement('div');d.className='av';
-  d.innerHTML=`<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
+  const img=document.createElement('img');
+  img.src='images/bot_avatar.png';
+  img.width=36;img.height=36;
+  img.onerror=function(){
+    d.removeChild(img);
+    d.innerHTML=`<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
+  };
+  d.appendChild(img);
   return d;
 }
 
@@ -493,9 +527,13 @@ function appendRow(el){area.appendChild(el);scroll();}
 function makeImgCard(imgKey,title,desc,links){
   const card=document.createElement('div');card.className='img-card';
   let ls=links.map(l=>`<div class="ic-link" onclick="handleLink('${l.a}')">${l.t}</div>`).join('');
-  const art=CARD_ARTS[imgKey]||'';
-  const ico=(!art && ICONS[imgKey])||ICONS['welcome'];
-  card.innerHTML=`<div class="ic-img" style="background:transparent;padding:${art?'0':'8px'};overflow:hidden">${art||ico}</div>
+  const imgSrc2 = IMAGE_MAP[imgKey];
+  const art=!imgSrc2 && (CARD_ARTS[imgKey]||'');
+  const ico=(!imgSrc2 && !art && ICONS[imgKey])||ICONS['welcome'];
+  const imgHtml2 = imgSrc2
+    ? `<img src="${imgSrc2}" width="220" height="130" style="width:100%;height:130px;object-fit:cover;display:block" onerror="this.style.display='none'">`
+    : (art || ico);
+  card.innerHTML=`<div class="ic-img" style="background:transparent;padding:${imgSrc2?'0':art?'0':'8px'};overflow:hidden">${imgHtml2}</div>
     <div class="ic-body"><div class="ic-title">${title}</div><div class="ic-desc">${desc}</div>${ls}</div>`;
   return card;
 }
@@ -506,13 +544,17 @@ function makeCaro(items){
   items.forEach(it=>{
     const card=document.createElement('div');card.className='caro-card';
     let ls=(it.links||[]).map(l=>`<div class="caro-link" onclick="handleLink('${l.a}')">${l.t} ▶</div>`).join('');
-    const art=CARD_ARTS[it.art||it.icon||it.img]||'';
-    const ico=(!art && ICONS[it.icon||it.img])||'';
-    const imgDiv=art
-      ? `<div class="caro-img" style="background:transparent;padding:0;overflow:hidden">${art}</div>`
-      : ico
-        ? `<div class="caro-img" style="background:transparent;padding:10px;display:flex;align-items:center;justify-content:center">${ico}</div>`
-        : `<div class="caro-img ${it.img}"></div>`;
+    const imgKey = it.art||it.icon||it.img||'';
+    const imgSrc = IMAGE_MAP[imgKey];
+    const art = !imgSrc && (CARD_ARTS[imgKey]||'');
+    const ico = !imgSrc && !art && (ICONS[imgKey]||'');
+    const imgDiv = imgSrc
+      ? `<div class="caro-img" style="background:#f0e8e0;padding:0;overflow:hidden"><img src="${imgSrc}" width="190" height="120" style="width:100%;height:120px;object-fit:cover;display:block" onerror="this.parentElement.innerHTML=\'<div style=\\"width:100%;height:120px;background:#f0e8e0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999\\">画像なし</div>\'"></div>`
+      : art
+        ? `<div class="caro-img" style="background:transparent;padding:0;overflow:hidden">${art}</div>`
+        : ico
+          ? `<div class="caro-img" style="background:transparent;padding:10px;display:flex;align-items:center;justify-content:center">${ico}</div>`
+          : `<div class="caro-img ${it.img||''}"></div>`;
     card.innerHTML=imgDiv+`<div class="caro-body"><div class="caro-title">${it.title}</div><div class="caro-desc">${it.desc||''}</div>${ls}</div>`;
     inner.appendChild(card);
   });
@@ -657,10 +699,13 @@ async function showStyleMenu(){
   ].forEach(c=>{
     const card=document.createElement('div');card.className='wide-card';
     let ls=c.links.map(l=>`<div class="wc-link" onclick="handleLink('${l.a}')">${l.t} ▶</div>`).join('');
-    const art=CARD_ARTS[c.artKey]||'';
-    const imgHtml=art
-      ? `<div class="wc-img" style="background:transparent;padding:0;overflow:hidden;height:90px">${art}</div>`
-      : `<div class="wc-img ${c.imgClass}"></div>`;
+    const wcSrc = IMAGE_MAP[c.artKey];
+    const art=!wcSrc && (CARD_ARTS[c.artKey]||'');
+    const imgHtml= wcSrc
+      ? `<div class="wc-img" style="background:#f0e8e0;padding:0;overflow:hidden;height:90px"><img src="${wcSrc}" width="190" height="90" style="width:100%;height:90px;object-fit:cover;display:block" onerror="this.style.display='none'"></div>`
+      : art
+        ? `<div class="wc-img" style="background:transparent;padding:0;overflow:hidden;height:90px">${art}</div>`
+        : `<div class="wc-img ${c.imgClass}"></div>`;
     card.innerHTML=imgHtml+`<div class="wc-body"><div class="wc-title">${c.title}</div>${c.desc?`<div style="font-size:10px;color:var(--muted);margin-bottom:4px">${c.desc}</div>`:''}${ls}</div>`;
     ww.appendChild(card);
   });
@@ -839,7 +884,7 @@ function handleLink(a){
       row.appendChild(av());
       const col=document.createElement('div');col.className='msg-col';
       const card=document.createElement('div');card.className='book-card';
-      card.innerHTML=`<div class="bk-img warm" style="background:transparent;padding:0;overflow:hidden">${CARD_ARTS['salon_interior']||''}</div>
+      card.innerHTML=`<div class="bk-img warm" style="background:#c8d4c8;padding:0;overflow:hidden"><img src="images/booking_hero.png" width="240" height="130" style="width:100%;height:130px;object-fit:cover;display:block" onerror="this.style.display='none'"></div>
         <div class="bk-body">
           <div class="bk-title">ご予約はこちらから</div>
           <div class="bk-desc">LINEから24時間いつでも受付中です。<br>緊急の場合はお電話ください。</div>

@@ -88,3 +88,12 @@ Mishona（株式会社ミショナ）の採用適性テスト提出物。
 * Add loading skeleton for calendar
 * Add swipe gesture support for tab navigation
 
+## Phase1_Gate.html structure
+
+* PdMチェックリストアプリ — Mishona PdM採用テストの補足成果物
+* 6フェーズアコーディオン: Discovery → Design → Development → QA → Release → Post-release
+* 40タスク + 9 QAゲート（赤バッジ = ブロッキング）
+* フェーズ別プログレスバー + 全体サマリー
+* localStorage永続化（リフレッシュしても進捗保持）
+* ダークモード対応（CSS variables + prefers-color-scheme）
+* リセットボタン（確認ダイアログ付き）
