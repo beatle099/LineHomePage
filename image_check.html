@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Image Check — Haru Tokyo</title>
+<style>
+body{font-family:sans-serif;max-width:600px;margin:20px auto;padding:0 16px;background:#f5f5f5}
+h2{font-size:16px;margin:20px 0 10px;color:#333;border-bottom:2px solid #c8846a;padding-bottom:4px}
+.row{display:flex;align-items:center;gap:12px;background:white;border-radius:8px;padding:10px;margin-bottom:6px;border:1px solid #e0e0e0}
+.thumb{width:60px;height:40px;object-fit:cover;border-radius:4px;background:#f0e8e0;flex-shrink:0}
+.info{flex:1}
+.fname{font-size:12px;font-weight:700;color:#333;font-family:monospace}
+.status{font-size:11px;margin-top:2px}
+.ok{color:#06C755;font-weight:700}
+.fail{color:#dc2626;font-weight:700}
+.path{font-size:10px;color:#888;margin-top:2px}
+#summary{font-size:13px;font-weight:700;padding:12px;border-radius:8px;margin-bottom:16px;text-align:center}
+</style>
+</head>
+<body>
+<h1 style="font-size:18px;color:#c8846a">Haru Tokyo — Image Load Check</h1>
+<div id="summary">チェック中...</div>
+
+<h2>Rich Menu Icons (108×108)</h2>
+<div id="icons"></div>
+
+<h2>Chat Avatars (72×72)</h2>
+<div id="avatars"></div>
+
+<h2>Stylist Cards (190×120)</h2>
+<div id="stylists"></div>
+
+<h2>Menu Cards (190×120)</h2>
+<div id="menus"></div>
+
+<h2>Coupon & Gift (190×120)</h2>
+<div id="coupons"></div>
+
+<h2>Wide Cards (190×90)</h2>
+<div id="wide"></div>
+
+<h2>Hero & LINE Images</h2>
+<div id="hero"></div>
+
+<script>
+const FILES = {
+  icons: [
+    'images/rm_stylist.png',
+    'images/rm_menu.png',
+    'images/rm_booking.png',
+    'images/rm_point.png',
+    'images/rm_access.png',
+    'images/rm_coupon.png',
+  ],
+  avatars: [
+    'images/bot_avatar.png',
+    'images/line_icon.png',
+  ],
+  stylists: [
+    'images/stylist_koshigaya.png',
+    'images/stylist_okuyama.png',
+    'images/stylist_sato.png',
+    'images/stylist_manabe.png',
+    'images/stylist_all.png',
+  ],
+  menus: [
+    'images/menu_cut.png',
+    'images/menu_color.png',
+    'images/menu_perm.png',
+    'images/menu_treatment.png',
+    'images/menu_consult.png',
+  ],
+  coupons: [
+    'images/coupon_bg.png',
+    'images/gift_bg.png',
+  ],
+  wide: [
+    'images/salon_interior.png',
+    'images/products_shelf.png',
+  ],
+  hero: [
+    'images/booking_hero.png',
+    'images/line_cover.png',
+    'images/profile_icon.png',
+  ],
+};
+
+let total = 0, loaded = 0, failed = 0;
+const results = {};
+
+function makeRow(src) {
+  const row = document.createElement('div');
+  row.className = 'row';
+  row.id = 'row-' + src.replace(/[^a-z0-9]/gi,'_');
+
+  const img = document.createElement('img');
+  img.className = 'thumb';
+  img.src = src;
+
+  const info = document.createElement('div');
+  info.className = 'info';
+
+  const fname = document.createElement('div');
+  fname.className = 'fname';
+  fname.textContent = src.split('/').pop();
+
+  const status = document.createElement('div');
+  status.className = 'status';
+  status.textContent = '読み込み中...';
+
+  const path = document.createElement('div');
+  path.className = 'path';
+  path.textContent = src;
+
+  img.onload = () => {
+    status.className = 'status ok';
+    status.textContent = `✅ 読み込み成功 (${img.naturalWidth}×${img.naturalHeight}px)`;
+    loaded++;
+    updateSummary();
+  };
+  img.onerror = () => {
+    status.className = 'status fail';
+    status.textContent = '❌ ファイルが見つかりません';
+    img.style.background = '#fef2f2';
+    img.style.border = '1px dashed #dc2626';
+    failed++;
+    updateSummary();
+  };
+
+  total++;
+  info.appendChild(fname);
+  info.appendChild(status);
+  info.appendChild(path);
+  row.appendChild(img);
+  row.appendChild(info);
+  return row;
+}
+
+function updateSummary() {
+  const done = loaded + failed;
+  const el = document.getElementById('summary');
+  if (done < total) {
+    el.style.background = '#fffbeb';
+    el.textContent = `チェック中... ${done}/${total}`;
+  } else {
+    if (failed === 0) {
+      el.style.background = '#f0faf4';
+      el.style.color = '#06C755';
+      el.textContent = `✅ 全${total}ファイル 読み込み成功！`;
+    } else {
+      el.style.background = '#fef2f2';
+      el.style.color = '#dc2626';
+      el.textContent = `⚠️ ${loaded}/${total} 成功 — ${failed}ファイルが見つかりません`;
+    }
+  }
+}
+
+Object.entries(FILES).forEach(([section, files]) => {
+  const container = document.getElementById(section);
+  files.forEach(src => container.appendChild(makeRow(src)));
+});
+</script>
+</body>
+</html>

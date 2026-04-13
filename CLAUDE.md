@@ -16,6 +16,8 @@ Mishona（株式会社ミショナ）の採用適性テスト提出物。
 * インタラクティブな予約ボット（reservation.html）を実装
 * 無料プラン相当の機能範囲内で制作
 * PdM候補としての設計・実装・UX思考を示す
+* PdMチェックリストアプリ（Phase1_Gate.html）でプロダクト開発ライフサイクル管理力を実証
+* L Message（エルメ）の競合分析・セグメント定義でPdMリサーチ力を実証
 
 ## Files
 
@@ -23,6 +25,11 @@ Mishona（株式会社ミショナ）の採用適性テスト提出物。
 |-|-|
 |index.html|メインページ — LINE公式アカウントUI（4タブ）|
 |reservation.html|予約ボット — 4ステップ予約フロー＋電話フォールバック|
+|Phase1_Gate.html|PdMチェックリストアプリ — 6フェーズ・QAゲート・localStorage永続化・ダークモード|
+|DISCOVERY.md|Phase 1 ディスカバリー＆プランニング文書|
+|PRD.md|プロダクト要求仕様書（PdMチェックリストMVP）|
+|COMPETITIVE_ANALYSIS_1.md|L Message競合分析 — LINE自動化SaaS市場|
+|SEGMENT_POSITIONING.md|ターゲットセグメント＆ポジショニング定義|
 |CLAUDE.md|このファイル — Claude Code用プロジェクト定義|
 |AGENTS.md|Codex用プロジェクト定義|
 
