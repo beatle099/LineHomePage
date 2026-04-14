@@ -236,10 +236,6 @@ input[type=range]{flex:1;accent-color:var(--green)}
         <div class="rm-icon rose"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
         <div class="rm-label">お店の紹介</div>
       </div>
-      <div class="rm-btn" onclick="rmAction('access')">
-        <div class="rm-icon gray"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        <div class="rm-label">お店の紹介</div>
-      </div>
       <div class="rm-btn" onclick="rmAction('campaign')">
         <div class="rm-icon rose"><svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg></div>
         <div class="rm-label">キャンペーン</div>
@@ -663,8 +659,7 @@ async function showMainNav(){
     {label:'スタイリスト紹介',action:()=>showStylists()},
     {label:'施術メニュー',action:()=>showStyleMenu()},
     {label:'ご予約',action:()=>showReservation()},
-    {label:'お店の紹介',action:()=>showShopInfo()},
-    {label:'アクセス',action:()=>showAccess()},
+    {label:'お店の紹介',action:()=>showShopIntro()},
   ]);
 }
 
@@ -733,9 +728,9 @@ async function showReservation(){
 }
 
 // ══════════════════════════════════════════
-// SHOP INFO — お店の紹介
+// SHOP INTRO — お店の紹介 (unified)
 // ══════════════════════════════════════════
-async function showShopInfo(){
+async function showShopIntro(){
   await botMsg('Haru Tokyo のご紹介です 🌸');
   const card=document.createElement('div');card.className='shop-info-wrap';
   card.innerHTML=`
@@ -746,36 +741,30 @@ async function showShopInfo(){
         <div class="si-sub">表参道の隠れ家ヘアサロン</div>
       </div>
     </div>
-    <div class="si-desc">カラー・トリートメントを得意とするスタイリストが、あなただけの美髪をつくります。LINEから24時間ご予約受付中！</div>
+    <div class="si-desc">カラー・トリートメントを得意とするスタイリストが、あなただけの美髪をつくります。<br>LINEから24時間ご予約受付中！</div>
+    <div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+      <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px">👤 スタイリスト</div>
+      <div style="font-size:12px;line-height:1.8">越谷涼介 ／ 奥山香織</div>
+      <div style="margin-top:4px"><span onclick="showStylists()" style="color:var(--blue);font-size:11px;font-weight:500;cursor:pointer">プロフィールを見る →</span></div>
+    </div>
+    <div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+      <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px">✂️ 人気メニュー</div>
+      <div style="font-size:12px;line-height:1.8">デザインカット　¥6,600<br>オーガニックカラー　¥6,600</div>
+      <div style="margin-top:4px"><span onclick="showStyleMenu()" style="color:var(--blue);font-size:11px;font-weight:500;cursor:pointer">メニュー一覧を見る →</span></div>
+    </div>
     <div class="si-rows">
-      <div class="si-row"><span class="si-key">📍 住所</span><span class="si-val">東京都渋谷区神宮前X-XX-XX 〇〇ビル 2F</span></div>
+      <div class="si-row"><span class="si-key">📍 住所</span><span class="si-val">〒107-0061<br>東京都渋谷区神宮前X-XX-XX 〇〇ビル 2F</span></div>
       <div class="si-row"><span class="si-key">🚶 最寄り</span><span class="si-val">表参道駅 A2出口 徒歩5分</span></div>
-      <div class="si-row"><span class="si-key">🕐 営業</span><span class="si-val">月水〜土 10:00-20:00 / 日祝 10:00-18:00</span></div>
+      <div class="si-row"><span class="si-key">🕐 営業</span><span class="si-val">月水〜土 10:00-20:00<br>日祝 10:00-18:00</span></div>
       <div class="si-row"><span class="si-key">🚫 定休日</span><span class="si-val">毎週火曜日</span></div>
       <div class="si-row"><span class="si-key">📞 電話</span><span class="si-val"><a href="tel:0312345678" style="color:var(--blue)">03-1234-5678</a></span></div>
+      <div class="si-row"><span class="si-key">🗺️ 地図</span><span class="si-val"><span onclick="handleLink('open_map')" style="color:var(--blue);cursor:pointer">Google Maps で開く →</span></span></div>
     </div>
     <div class="si-actions">
       <div class="si-btn" onclick="handleLink('open_map')">📍 地図を見る</div>
       <div class="si-btn" onclick="handleLink('reservation')">📅 予約する</div>
     </div>`;
   appendRow(card);
-  setTimeout(()=>addNextChips(),800);
-}
-
-// ══════════════════════════════════════════
-// ACCESS
-// ══════════════════════════════════════════
-async function showAccess(){
-  await botMsg('アクセス情報をお伝えします 📍');
-  const row=document.createElement('div');row.className='msg-row';
-  row.appendChild(av());
-  const col=document.createElement('div');col.className='msg-col';
-  const bub=document.createElement('div');bub.className='access-bub';
-  bub.innerHTML=`【アクセス情報】<br><br>当店は最寄りが「<strong>表参道駅</strong>」<br>A2出口より徒歩5分の距離にございます！<br><br>〒107-0061<br>東京都渋谷区神宮前X-XX-XX<br><br>道路を挟んで目の前に<br>〇〇ビルがございます♪<br><br>以下のURLをタップして地図をご確認のうえご来店ください。<br>↓ ↓ ↓ ↓ ↓
-    <div class="map-link" onclick="handleLink('open_map')">https://maps.google.com → Haru Tokyo</div>
-    <div class="map-preview">📍 Google Maps — 表参道駅 徒歩5分</div>`;
-  const ts=document.createElement('div');ts.className='msg-time';ts.textContent=timeStr();
-  col.appendChild(bub);col.appendChild(ts);row.appendChild(col);appendRow(row);
   setTimeout(()=>addNextChips(),800);
 }
 
@@ -800,8 +789,7 @@ function addNextChips(){
     {label:'施術メニュー',action:()=>showStyleMenu()},
     {label:'クーポン',action:()=>showCampaign()},
     {label:'ご予約',action:()=>showReservation()},
-    {label:'お店の紹介',action:()=>showShopInfo()},
-    {label:'アクセス',action:()=>showAccess()},
+    {label:'お店の紹介',action:()=>showShopIntro()},
   ]);
 }
 
@@ -824,8 +812,8 @@ function rmAction(a){
   if(a==='stylist')showStylists();
   else if(a==='style_menu')showStyleMenu();
   else if(a==='reservation')showReservation();
-  else if(a==='shopinfo')showShopInfo();
-  else if(a==='access')showAccess();
+  else if(a==='shopinfo')showShopIntro();
+  else if(a==='access')showShopIntro();
   else if(a==='coupon')handleLink('coupon_20');
   else if(a==='campaign')showCampaign();
 }
@@ -860,7 +848,7 @@ function handleLink(a){
   }
   if(a==='stylist'){ showStylists(); return; }
   if(a==='style_menu'||a==='style_menu_detail'){ showStyleMenu(); return; }
-  if(a==='access'){ showAccess(); return; }
+  if(a==='access'){ showShopIntro(); return; }
   if(a==='campaign'){ showCampaign(); return; }
   if(a==='coupon_20'){ userMsg('20%OFFクーポンを受け取る'); setTimeout(async()=>{ await botMsg('20%OFFクーポンをお受け取りいただきました 🎁<br>ご来店時にスタッフにお見せください。'); addNextChips(); },400); return; }
   if(a==='coupon_spa'){ userMsg('ヘッドスパ15分券を受け取る'); setTimeout(async()=>{ await botMsg('ヘッドスパお試し15分券をお受け取りいただきました 🌿'); addNextChips(); },400); return; }
@@ -882,10 +870,10 @@ const KW={
   'スタッフ':()=>showStylists(),
   'スタイリスト':()=>showStylists(),
   'クーポン':()=>handleLink('coupon_20'),
-  'アクセス':()=>showAccess(),
-  '場所':()=>showAccess(),
-  'お店':()=>showShopInfo(),
-  '紹介':()=>showShopInfo(),
+  'アクセス':()=>showShopIntro(),
+  '場所':()=>showShopIntro(),
+  'お店':()=>showShopIntro(),
+  '紹介':()=>showShopIntro(),
   'キャンペーン':()=>showCampaign(),
 };
 const AUTO_REPLY='メッセージありがとうございます！<br>申し訳ありませんが、このアカウントでは個別のお問い合わせを受け付けておりません。<br>次の配信までお待ちください 😊';
@@ -929,8 +917,8 @@ if (urlAction) {
     else if(urlAction==='style_menu') showStyleMenu();
     else if(urlAction==='campaign') showCampaign();
     else if(urlAction==='reservation') showReservation();
-    else if(urlAction==='point'||urlAction==='shopinfo') showShopInfo();
-    else if(urlAction==='access') showAccess();
+    else if(urlAction==='point'||urlAction==='shopinfo') showShopIntro();
+    else if(urlAction==='access') showShopIntro();
     else boot();
   }, 500);
 } else if (surveyDone) {
