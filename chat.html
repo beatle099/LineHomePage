@@ -776,58 +776,7 @@ async function showAccess(){
     <div class="map-preview">📍 Google Maps — 表参道駅 徒歩5分</div>`;
   const ts=document.createElement('div');ts.className='msg-time';ts.textContent=timeStr();
   col.appendChild(bub);col.appendChild(ts);row.appendChild(col);appendRow(row);
-  setTimeout(async ()=>{
-    // Final reservation card
-    await showReservationFinal();
-  },1000);
-}
-
-async function showReservationFinal(){
-  const card=document.createElement('div');card.className='book-card';
-  card.innerHTML=`<div class="bk-img warm"><svg viewBox="0 0 48 48"><rect x="8" y="12" width="32" height="32" rx="3"/><path d="M16 6v10M32 6v10M8 22h32"/></svg></div>
-    <div class="bk-body">
-      <div class="bk-title">ご予約はこちらから</div>
-      <div class="bk-desc">LINEから24時間いつでもご予約いただけます。お気軽にどうぞ。</div>
-      <a href="tel:0312345678" class="bk-btn btn-gold">電話で予約する ▶</a>
-      <button class="bk-btn btn-green" onclick="handleLink('reservation_bot')">LINEで予約する ▶</button>
-    </div>`;
-  botCard(card);
-  setTimeout(()=>showQR(),1000);
-}
-
-function showQR(){
-  const wrap=document.createElement('div');wrap.className='qr-wrap';
-  wrap.innerHTML=`
-    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">スマートフォンでご覧ください</div>
-    <canvas id="qr-c" width="140" height="140" style="display:block;margin:0 auto 10px;border-radius:6px"></canvas>
-    <div class="qr-note">LINEアプリを起動して、<br>QRコードを読み取ってください。<br><span style="color:var(--green);font-weight:700">https://beatle099.github.io/<br>LineHomePage/chat.html</span></div>
-    <div class="lm-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="#06C755"><path d="M12 2C6.48 2 2 6.04 2 11c0 3.19 1.73 6.01 4.36 7.77L5.5 22l3.5-1.5c.93.26 1.92.4 2.95.4 5.52 0 10-4.04 10-9S17.52 2 12 2z"/></svg>Powered by L Message</div>`;
-  appendRow(wrap);
-  setTimeout(()=>{
-    const c=document.getElementById('qr-c');if(!c)return;
-    const ctx=c.getContext('2d');
-    ctx.fillStyle='#fff';ctx.fillRect(0,0,140,140);
-    ctx.fillStyle='#000';
-    function csq(x,y,s){ctx.fillRect(x,y,s,s);ctx.fillStyle='#fff';ctx.fillRect(x+Math.round(s*.14),y+Math.round(s*.14),Math.round(s*.72),Math.round(s*.72));ctx.fillStyle='#000';ctx.fillRect(x+Math.round(s*.28),y+Math.round(s*.28),Math.round(s*.44),Math.round(s*.44));}
-    csq(4,4,32);csq(104,4,32);csq(4,104,32);
-    let s=42;function rng(){s=(s*1664525+1013904223)&0xffffffff;return(s>>>0)/4294967296;}
-    for(let r=0;r<17;r++)for(let cc=0;cc<17;cc++){
-      const x=6+cc*8,y=6+r*8;
-      if((cc<5&&r<5)||(cc>11&&r<5)||(cc<5&&r>11))continue;
-      if(rng()>.45){ctx.fillStyle='#000';ctx.fillRect(x,y,7,7);}
-    }
-  },200);
-  setTimeout(()=>showFinalMsg(),1000);
-}
-
-async function showFinalMsg(){
-  await botMsg('以上がご案内の全内容です ✨<br>ご不明な点はお気軽にメッセージをどうぞ 😊<br>ご来店をお待ちしております！');
-  addChips([
-    {label:'ご予約する',action:()=>handleLink('reservation_bot')},
-    {label:'メニューをもう一度見る',action:()=>showStyleMenu()},
-    {label:'スタイリストを見る',action:()=>showStylists()},
-    {label:'クーポンを使う',action:()=>handleLink('coupon_20')},
-  ]);
+  setTimeout(()=>addNextChips(),800);
 }
 
 // ══════════════════════════════════════════
