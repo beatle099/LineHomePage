@@ -224,7 +224,7 @@ input[type=range]{flex:1;accent-color:var(--green)}
       </div>
       <div class="rm-btn" onclick="rmAction('style_menu')">
         <div class="rm-icon blue"><svg viewBox="0 0 24 24"><path d="M12 3C8 3 4 7 4 12c0 4 2.7 7.5 6 9M12 3c4 0 8 4 8 9 0 4-2.7 7.5-6 9M12 3v18M4 12h16"/></svg></div>
-        <div class="rm-label">スタイルメニュー</div>
+        <div class="rm-label">メニュー</div>
       </div>
       <div class="rm-btn" onclick="rmAction('reservation')">
         <div class="rm-icon green"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
@@ -236,7 +236,7 @@ input[type=range]{flex:1;accent-color:var(--green)}
       </div>
       <div class="rm-btn" onclick="rmAction('access')">
         <div class="rm-icon gray"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        <div class="rm-label">アクセス</div>
+        <div class="rm-label">お店の紹介</div>
       </div>
       <div class="rm-btn" onclick="rmAction('campaign')">
         <div class="rm-icon rose"><svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg></div>
@@ -467,7 +467,7 @@ function scroll(){ if(_scrollTimer) clearTimeout(_scrollTimer); _scrollTimer=set
 function av(){
   const d=document.createElement('div');d.className='av';
   const img=document.createElement('img');
-  img.src='images/bot_avatar.png';
+  img.src='images/line_icon.png';
   img.width=44;img.height=44;img.loading='lazy';
   img.onerror=function(){
     d.removeChild(img);
@@ -632,6 +632,7 @@ async function ansQ3(){
 // ══════════════════════════════════════════
 async function showGift(){
   userMsg('初回特典を手に入れる');
+  try { localStorage.setItem('harutokyo_survey_done','1'); } catch(e){}
   await botMsg('🎁 特典をお受け取りいただきました！<br>以下のクーポンをご利用ください。');
   // 4-card coupon carousel
   botCaro([
@@ -658,10 +659,10 @@ async function showMainNav(){
   await botMsg('続けてご案内します。気になる項目をタップしてください 👇');
   addChips([
     {label:'スタイリスト紹介',action:()=>showStylists()},
-    {label:'スタイルメニュー',action:()=>showStyleMenu()},
+    {label:'施術メニュー',action:()=>showStyleMenu()},
     {label:'ご予約',action:()=>showReservation()},
-    {label:'ポイントカード',action:()=>showPoint()},
-    {label:'アクセス',action:()=>showAccess()},
+    {label:'ショップカード',action:()=>showPoint()},
+    {label:'お店の紹介',action:()=>showAccess()},
   ]);
 }
 
@@ -675,12 +676,6 @@ async function showStylists(){
       links:[{t:'趣味・ハマっていること',a:'hobby'},{t:'指名して予約する',a:'reservation'}]},
     {img:'c2',icon:'stylist',art:'okuyama',title:'奥山香織（おくやま）',desc:'髪質改善や艶髪ならお任せください！理想の髪質へと導きます！',
       links:[{t:'趣味・ハマっていること',a:'hobby'},{t:'指名して予約する',a:'reservation'}]},
-    {img:'c3',icon:'stylist',art:'sato',title:'佐藤美沙（さとう）',desc:'パーソナルカラーの知識を活かして理想のヘアスタイルをご提案します♪',
-      links:[{t:'趣味・ハマっていること',a:'hobby'},{t:'指名して予約する',a:'reservation'}]},
-    {img:'c4',icon:'stylist',art:'manabe',title:'真鍋沙織（まなべ）',desc:'縮毛矯正、ミネコラ、3D増毛なら私にお任せください！',
-      links:[{t:'趣味・ハマっていること',a:'hobby'},{t:'指名して予約する',a:'reservation'}]},
-    {img:'c5',icon:'booking',art:'any_stylist',title:'指名なしでも OK',desc:'どのスタイリストも高技術。お任せください。',
-      links:[{t:'ご予約はこちらから',a:'reservation'}]},
   ]);
   setTimeout(()=>addNextChips(),1000);
 }
@@ -694,8 +689,8 @@ async function showStyleMenu(){
   const ww=document.createElement('div');ww.className='wide-wrap';
   [{imgClass:'spa',artKey:'salon_interior',title:'Haru Tokyo のご紹介',desc:'表参道の隠れ家サロン。リラックスできる空間でぜひ素敵なひとときを♪',
     links:[{t:'ご予約はこちらから',a:'reservation'},{t:'アクセス情報',a:'access'},{t:'紹介キャンペーン',a:'coupon_20'}]},
-   {imgClass:'prod',artKey:'products',title:'スタッフ・メニュー・商品をご紹介↓',desc:'',
-    links:[{t:'スタッフを見てみる',a:'stylist'},{t:'メニューはこちら',a:'style_menu_detail'},{t:'厳選商品をチェック',a:'style_menu_detail'}]}
+   {imgClass:'prod',artKey:'products',title:'スタッフ・メニューのご紹介↓',desc:'',
+    links:[{t:'スタッフを見てみる',a:'stylist'},{t:'メニューはこちら',a:'style_menu_detail'}]}
   ].forEach(c=>{
     const card=document.createElement('div');card.className='wide-card';
     let ls=c.links.map(l=>`<div class="wc-link" onclick="handleLink('${l.a}')">${l.t} ▶</div>`).join('');
@@ -712,11 +707,8 @@ async function showStyleMenu(){
   appendRow(ww);
   // Menu carousel
   botCaro([
-    {img:'c1',icon:'cut',art:'cut_large',title:'デザインカット',desc:'骨格に合わせた似合わせカット。ロング料金なし。',links:[{t:'ご予約はこちら',a:'reservation'}]},
-    {img:'c2',icon:'color',art:'color_large',title:'オーガニックカラー',desc:'天然由来のカラー剤。頭皮に優しく、艶やかな仕上がりに。',links:[{t:'ご予約はこちら',a:'reservation'}]},
-    {img:'c3',icon:'perm',title:'デジタルパーマ',desc:'形状記憶で再現性抜群。ダメージを最小限に。',links:[{t:'ご予約はこちら',a:'reservation'}]},
-    {img:'c4',icon:'treatment',title:'髪質改善トリートメント',desc:'クセ・うねり・パサつきを抑え艶やかな仕上がりに！',links:[{t:'ご予約はこちら',a:'reservation'}]},
-    {img:'c5',icon:'stylist',title:'お悩みのヘアメニュー',desc:'お気軽にLINEでご相談ください。',links:[{t:'LINEで相談する',a:'contact'}]},
+    {img:'c1',icon:'cut',art:'cut_large',title:'デザインカット',desc:'¥6,600（税込）\n骨格に合わせた似合わせカット。ロング料金なし。',links:[{t:'ご予約はこちら',a:'reservation'}]},
+    {img:'c2',icon:'color',art:'color_large',title:'オーガニックカラー',desc:'¥6,600（税込）\n天然由来のカラー剤。頭皮に優しく、艶やかな仕上がりに。',links:[{t:'ご予約はこちら',a:'reservation'}]},
   ]);
   setTimeout(()=>addNextChips(),1000);
 }
@@ -851,11 +843,11 @@ async function showCampaign(){
 function addNextChips(){
   addChips([
     {label:'スタイリスト紹介',action:()=>showStylists()},
-    {label:'スタイルメニュー',action:()=>showStyleMenu()},
-    {label:'キャンペーン',action:()=>showCampaign()},
+    {label:'施術メニュー',action:()=>showStyleMenu()},
+    {label:'クーポン',action:()=>showCampaign()},
     {label:'ご予約',action:()=>showReservation()},
-    {label:'ポイントカード',action:()=>showPoint()},
-    {label:'アクセス',action:()=>showAccess()},
+    {label:'ショップカード',action:()=>showPoint()},
+    {label:'お店の紹介',action:()=>showAccess()},
   ]);
 }
 
@@ -972,9 +964,10 @@ async function boot(){
 
 // Deep link: chat.html?action=stylist jumps directly to section
 const urlAction = new URLSearchParams(window.location.search).get('action');
+const surveyDone = (function(){ try { return localStorage.getItem('harutokyo_survey_done')==='1'; } catch(e){ return false; } })();
+
 if (urlAction) {
   setTimeout(async()=>{
-    // Show rich menu immediately for deep links
     const rm=document.getElementById('rich-menu');
     if(rm) rm.style.display='block';
     if(urlAction==='stylist') showStylists();
@@ -984,6 +977,14 @@ if (urlAction) {
     else if(urlAction==='point') showPoint();
     else if(urlAction==='access') showAccess();
     else boot();
+  }, 500);
+} else if (surveyDone) {
+  // Returning visitor — skip survey, show rich menu + nav
+  setTimeout(async()=>{
+    await botMsg('おかえりなさい！Haru Tokyoです 😊<br>気になるメニューをお選びください。', 600);
+    document.getElementById('rich-menu').style.display='block';
+    showRichMenuOpen();
+    showMainNav();
   }, 500);
 } else {
   setTimeout(()=>boot(), 500);
