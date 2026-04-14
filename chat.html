@@ -111,17 +111,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:43
 .btn-green{background:var(--green);color:white}
 
 /* ── Point card ── */
-.point-wrap{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);width:260px;margin-left:44px;padding:14px}
-.pt-title{font-size:13px;font-weight:700;color:var(--gold);text-align:center;margin-bottom:2px}
-.pt-sub{font-size:10px;color:var(--muted);text-align:center;margin-bottom:10px}
-.pt-logo{width:56px;height:56px;border-radius:50%;border:2px solid #d4a820;background:#fffbeb;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:10px;font-weight:700;color:#92400e;letter-spacing:.5px}
-.pt-tagline{font-size:10px;color:#92400e;background:#fffbeb;border-radius:6px;padding:5px 8px;text-align:center;font-weight:500;margin-bottom:10px}
-.pt-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.pt-btn{background:var(--gold);border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;transition:opacity .15s}
-.pt-btn:active{opacity:.8}
-.pt-badge{background:var(--danger);color:white;font-size:9px;padding:2px 5px;border-radius:4px;display:inline-block;margin-bottom:4px}
-.pt-btn-sub{font-size:10px;color:rgba(255,255,255,.8);margin-bottom:3px}
-.pt-btn-main{font-size:11px;font-weight:700;color:white}
+.shop-info-wrap{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);margin-left:52px;max-width:calc(100% - 52px);padding:16px}
+.si-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.si-name{font-size:14px;font-weight:700}
+.si-sub{font-size:11px;color:var(--muted)}
+.si-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.si-rows{margin-bottom:14px}
+.si-row{display:flex;gap:8px;font-size:11px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.04)}
+.si-row:last-child{border-bottom:none}
+.si-key{color:var(--muted);min-width:60px;flex-shrink:0}
+.si-val{color:var(--text);line-height:1.5}
+.si-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.si-btn{background:var(--rose-lt);color:var(--rose);font-size:12px;font-weight:600;text-align:center;padding:10px;border-radius:8px;cursor:pointer;transition:opacity .15s}
+.si-btn:active{opacity:.7}
 
 /* ── Access ── */
 .access-bub{background:var(--white);border-radius:4px 16px 16px 16px;padding:12px 14px;font-size:13px;line-height:1.8;max-width:78%;box-shadow:var(--shadow)}
@@ -230,9 +232,9 @@ input[type=range]{flex:1;accent-color:var(--green)}
         <div class="rm-icon green"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
         <div class="rm-label">予約する</div>
       </div>
-      <div class="rm-btn" onclick="rmAction('point')">
-        <div class="rm-icon gold"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 3"/></svg></div>
-        <div class="rm-label">ポイント</div>
+      <div class="rm-btn" onclick="rmAction('shopinfo')">
+        <div class="rm-icon rose"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <div class="rm-label">お店の紹介</div>
       </div>
       <div class="rm-btn" onclick="rmAction('access')">
         <div class="rm-icon gray"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
@@ -661,8 +663,8 @@ async function showMainNav(){
     {label:'スタイリスト紹介',action:()=>showStylists()},
     {label:'施術メニュー',action:()=>showStyleMenu()},
     {label:'ご予約',action:()=>showReservation()},
-    {label:'ショップカード',action:()=>showPoint()},
-    {label:'お店の紹介',action:()=>showAccess()},
+    {label:'お店の紹介',action:()=>showShopInfo()},
+    {label:'アクセス',action:()=>showAccess()},
   ]);
 }
 
@@ -731,27 +733,30 @@ async function showReservation(){
 }
 
 // ══════════════════════════════════════════
-// POINT CARD
+// SHOP INFO — お店の紹介
 // ══════════════════════════════════════════
-async function showPoint(){
-  await botMsg('ポイントカードのご案内 🪙<br>タップするだけで毎日ポイントが貯まります！');
-  const card=document.createElement('div');card.className='point-wrap';
+async function showShopInfo(){
+  await botMsg('Haru Tokyo のご紹介です 🌸');
+  const card=document.createElement('div');card.className='shop-info-wrap';
   card.innerHTML=`
-    <div class="pt-title">✦ POINT CARD ✦</div>
-    <div class="pt-sub">タップするだけで貯まる 👆</div>
-    <div class="pt-logo">Haru<br>Tokyo</div>
-    <div class="pt-tagline">ポイントごとに豪華プレゼント進呈中</div>
-    <div class="pt-grid">
-      <div class="pt-btn" onclick="handleLink('point_stamp')">
-        <div class="pt-badge">1日1回限定</div>
-        <div class="pt-btn-sub">ポイントを貯める</div>
-        <div class="pt-btn-main">毎日ポチポチしてね！▶</div>
+    <div class="si-header">
+      <img src="images/line_icon.png" width="48" height="48" style="border-radius:50%;object-fit:cover" onerror="this.style.display='none'">
+      <div>
+        <div class="si-name">Haru Tokyo（ハル東京）</div>
+        <div class="si-sub">表参道の隠れ家ヘアサロン</div>
       </div>
-      <div class="pt-btn" onclick="handleLink('point_use')">
-        <div style="height:18px"></div>
-        <div class="pt-btn-sub">獲得状況・特典利用</div>
-        <div class="pt-btn-main">ご利用をお忘れなく！▶</div>
-      </div>
+    </div>
+    <div class="si-desc">カラー・トリートメントを得意とするスタイリストが、あなただけの美髪をつくります。LINEから24時間ご予約受付中！</div>
+    <div class="si-rows">
+      <div class="si-row"><span class="si-key">📍 住所</span><span class="si-val">東京都渋谷区神宮前X-XX-XX 〇〇ビル 2F</span></div>
+      <div class="si-row"><span class="si-key">🚶 最寄り</span><span class="si-val">表参道駅 A2出口 徒歩5分</span></div>
+      <div class="si-row"><span class="si-key">🕐 営業</span><span class="si-val">月水〜土 10:00-20:00 / 日祝 10:00-18:00</span></div>
+      <div class="si-row"><span class="si-key">🚫 定休日</span><span class="si-val">毎週火曜日</span></div>
+      <div class="si-row"><span class="si-key">📞 電話</span><span class="si-val"><a href="tel:0312345678" style="color:var(--blue)">03-1234-5678</a></span></div>
+    </div>
+    <div class="si-actions">
+      <div class="si-btn" onclick="handleLink('open_map')">📍 地図を見る</div>
+      <div class="si-btn" onclick="handleLink('reservation')">📅 予約する</div>
     </div>`;
   appendRow(card);
   setTimeout(()=>addNextChips(),800);
@@ -846,8 +851,8 @@ function addNextChips(){
     {label:'施術メニュー',action:()=>showStyleMenu()},
     {label:'クーポン',action:()=>showCampaign()},
     {label:'ご予約',action:()=>showReservation()},
-    {label:'ショップカード',action:()=>showPoint()},
-    {label:'お店の紹介',action:()=>showAccess()},
+    {label:'お店の紹介',action:()=>showShopInfo()},
+    {label:'アクセス',action:()=>showAccess()},
   ]);
 }
 
@@ -870,7 +875,7 @@ function rmAction(a){
   if(a==='stylist')showStylists();
   else if(a==='style_menu')showStyleMenu();
   else if(a==='reservation')showReservation();
-  else if(a==='point')showPoint();
+  else if(a==='shopinfo')showShopInfo();
   else if(a==='access')showAccess();
   else if(a==='coupon')handleLink('coupon_20');
   else if(a==='campaign')showCampaign();
@@ -930,7 +935,8 @@ const KW={
   'クーポン':()=>handleLink('coupon_20'),
   'アクセス':()=>showAccess(),
   '場所':()=>showAccess(),
-  'ポイント':()=>showPoint(),
+  'お店':()=>showShopInfo(),
+  '紹介':()=>showShopInfo(),
   'キャンペーン':()=>showCampaign(),
 };
 const AUTO_REPLY='メッセージありがとうございます！<br>申し訳ありませんが、このアカウントでは個別のお問い合わせを受け付けておりません。<br>次の配信までお待ちください 😊';
@@ -974,7 +980,7 @@ if (urlAction) {
     else if(urlAction==='style_menu') showStyleMenu();
     else if(urlAction==='campaign') showCampaign();
     else if(urlAction==='reservation') showReservation();
-    else if(urlAction==='point') showPoint();
+    else if(urlAction==='point'||urlAction==='shopinfo') showShopInfo();
     else if(urlAction==='access') showAccess();
     else boot();
   }, 500);
